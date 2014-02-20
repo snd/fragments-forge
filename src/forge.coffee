@@ -5,9 +5,37 @@ module.exports = forge = {}
 module.exports.dataAccessorSpec = (name) ->
     words = util.splitCamelcase name
 
+    rest = words.slice(1)
+
+    partition = util.splitArray rest, 'where'
+
     switch words[0]
         when 'first'
-            forge.firstDataAccessorSpec words.slice 1
+            {
+                type: 'first'
+                name: partition[0]
+                where: partition.slice(1)
+            }
+        when 'update'
+            {
+                type: 'update'
+                name: partition[0]
+                where: partition.slice(1)
+            }
+        when 'delete'
+            # dont allow mass delete without condition for security reasons
+            if partition.slice(1).length is 0
+                return
+            {
+                type: 'delete'
+                name: partition[0]
+                where: partition.slice(1)
+            }
+        when 'insert'
+            {
+                type: 'insert'
+                name: rest
+            }
         else
             return
 
@@ -25,13 +53,6 @@ module.exports.dataAccessorSpec = (name) ->
 #     [conditionWords].concat(remainingClauses)
 
 module.exports.firstDataAccessorSpec = (words) ->
-    partition = util.splitArray words, 'where'
-
-    {
-        type: 'first'
-        name: partition[0]
-        where: partition.slice(1)
-    }
 
 module.exports.newDataAccessorResolver = (modelNameToDependencyName) ->
     (container, name) ->

@@ -18,18 +18,43 @@ module.exports =
 
     #     test.done()
 
-    'dataAccessorSpec': (test) ->
-        test.deepEqual forge.dataAccessorSpec('firstUser'),
-            type: 'first'
-            name: ['user']
-            where: []
-        test.deepEqual forge.dataAccessorSpec('firstUserCreatedAt'),
-            type: 'first'
-            name: ['user', 'created', 'at']
-            where: []
-        test.deepEqual forge.dataAccessorSpec('firstUserWhereCreatedAt'),
-            type: 'first'
-            name: ['user']
-            where: [['created', 'at']]
+    'dataAccessorSpec':
 
-        test.done()
+        'first': (test) ->
+            test.deepEqual forge.dataAccessorSpec('firstUser'),
+                type: 'first'
+                name: ['user']
+                where: []
+            test.deepEqual forge.dataAccessorSpec('firstUserCreatedAt'),
+                type: 'first'
+                name: ['user', 'created', 'at']
+                where: []
+            test.deepEqual forge.dataAccessorSpec('firstUserWhereCreatedAt'),
+                type: 'first'
+                name: ['user']
+                where: [['created', 'at']]
+            test.deepEqual forge.dataAccessorSpec('firstOrderReportWhereIdWhereCreatedAt'),
+                type: 'first'
+                name: ['order', 'report']
+                where: [['id'], ['created', 'at']]
+
+            test.done()
+
+        'delete': (test) ->
+            test.ok not forge.dataAccessorSpec('deleteOrderReport')?
+            test.deepEqual forge.dataAccessorSpec('deleteOrderReportWhereId'),
+                type: 'delete'
+                name: ['order', 'report']
+                where: [['id']]
+
+            test.done()
+
+        'insert': (test) ->
+            test.deepEqual forge.dataAccessorSpec('insertOrderReport'),
+                type: 'insert'
+                name: ['order', 'report']
+            test.deepEqual forge.dataAccessorSpec('insertUserWhere'),
+                type: 'insert'
+                name: ['user', 'where']
+
+            test.done()
