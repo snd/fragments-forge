@@ -1,6 +1,6 @@
 # blaze-forge
 
-**WORK IN PROGRESS**
+**THOUGHT IN PROGRESS!**
 
 blaze-forge is a resolver for hinoki containers that can autogenerate
 common data accessor functions, loaders, etc.
@@ -13,9 +13,14 @@ data in the database
 **definition: data specification:** an object with properties
 `table`, `updateableColumns`, `insertableColumns`
 
-for blaze-rest also `errors`, `accessControl` (?)
+? for blaze-rest also `errors`, `accessControl`
 
 the data accessor resolver needs a way to look up data specs by name:
+
+you can overwrite everything auto generated if you want
+because the factory resolver is called before the generator resolver
+
+### use
 
 ```coffeescript
 hinoki.defaultResolver = (container, name) ->
@@ -33,9 +38,23 @@ container =
     ]
 ```
 
-you can overwrite everything auto generated if you want
-because the factory resolver is called before the generator resolver
+### data accessor patterns
 
+##### first
+
+**pattern**: "first" followed by the `modelName` followed by zero-or-more
+occurences of: "Where" followed a camelcased column name.
+
+examples:
+
+- firstUserWhereId (id)
+- firstAdmin ()
+- firstOrderReport ()
+- firstOrderWhereIsPendingAndIsActive (isPending, isActive)
+
+##### `insert{modelName}`
+
+##### `insertMany{modelName}`
 
 this is heavy on conventions!!!
 
@@ -56,16 +75,27 @@ Select{}where{}...Orderby{}asc|desc
 Browse{} which Takes options that allow ordering, filtering, pagination and sorting
 
 updateMany signalizes to return all
+
 insertMany signalizes to return all
+
+### data loader patterns
+
+##### `$${modelName}
 
 $$pageWhereIdIsParamsId
 
 $$pagesOrderByCreatedAtDesc
 
-$$pages
+##### `$${modelName}ByQuery`
+
+load 
+
+- pagesByQuery
+
+---
 
 you can not give arguments to the factories
 but through resolvers you can give some sort of arguments
 through the dependency names
 
-scrap url boilerplate
+? scrap url boilerplate
