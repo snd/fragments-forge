@@ -17,6 +17,9 @@ module.exports.dataAccessorSpec = (name) ->
                 where: partition.slice(1)
             }
         when 'update'
+            # dont allow mass update without condition for security reasons
+            if partition.slice(1).length is 0
+                return
             {
                 type: 'update'
                 name: partition[0]

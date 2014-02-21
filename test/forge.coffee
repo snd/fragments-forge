@@ -49,6 +49,15 @@ module.exports =
 
             test.done()
 
+        'delete': (test) ->
+            test.ok not forge.dataAccessorSpec('updateOrderReport')?
+            test.deepEqual forge.dataAccessorSpec('updateOrderReportWhereRegistrationNumber'),
+                type: 'update'
+                name: ['order', 'report']
+                where: [['registration', 'number']]
+
+            test.done()
+
         'insert': (test) ->
             test.deepEqual forge.dataAccessorSpec('insertOrderReport'),
                 type: 'insert'
