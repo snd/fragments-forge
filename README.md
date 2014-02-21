@@ -40,25 +40,45 @@ container =
 
 ### data accessor patterns
 
-##### first
+#### condition (pattern fragment)
 
-**pattern**: "first" followed by the `modelName` followed by zero-or-more
-occurences of: "Where" followed a camelcased column name.
+`Where` followed by a camelcased column name
 
-examples:
+##### examples
+
+- whereId
+- whereCreatedAt
+- whereReferenceNumber
+
+#### first
+
+##### pattern
+
+`first` followed by the model name followed by zero-or-more
+[conditions](#condition)
+
+##### examples
 
 - firstUserWhereId (id)
 - firstAdmin ()
 - firstOrderReport ()
 - firstOrderWhereIsPendingAndIsActive (isPending, isActive)
 
-##### `insert{modelName}`
+#### select
 
-##### `insertMany{modelName}`
+#### browse
 
-this is heavy on conventions!!!
+#### insert
 
-? make the conventions changeable
+#### insertMany
+
+
+#### update
+
+
+#### updateMany
+
+like [update](#update)
 
 auto generate the most common dao methods according to a naming convention:
 firstUserWhereId
@@ -66,27 +86,24 @@ firstAdminWhereCreatedAt
 browseAdmins (filtering and pagination)
 deleteAdminWhereId
 
-Start with: First{}whereid
-Insert{}
-Update{}where{}...
-Delete{}where{}...
-First{}where{}...
-Select{}where{}...Orderby{}asc|desc
-Browse{} which Takes options that allow ordering, filtering, pagination and sorting
+#### delete
 
-updateMany signalizes to return all
-
-insertMany signalizes to return all
+`first` followed by the model name followed by zero-or-more
+[conditions](#condition)
 
 ### data loader patterns
 
-##### `$${modelName}
+##### first where params
+
+##### where params
 
 $$pageWhereIdIsParamsId
 
+##### 
+
 $$pagesOrderByCreatedAtDesc
 
-##### `$${modelName}ByQuery`
+##### browse
 
 load 
 
@@ -99,3 +116,7 @@ but through resolvers you can give some sort of arguments
 through the dependency names
 
 ? scrap url boilerplate
+
+this is heavy on conventions!!!
+
+? make the conventions changeable
