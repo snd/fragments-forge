@@ -60,7 +60,7 @@ container =
 
 #### browse (for backoffice table views)
 
-`browse` followed by the model name followed by and optional [order](#order-pattern-fragment)
+`browse` followed by the model name followed by an optional [order](#order-pattern-fragment)
 (which overwrites/disables `orderBy` and `orderAsc`):
 
 - browseUser(options)
@@ -137,21 +137,12 @@ generated function returns updated records.
 
 ### data loader patterns
 
-##### first where params
+$$firstPageWhereIdIsParamsId
 
-##### where params
+$$pageWhereIsActive
+$$pageOrderByCreatedAtDesc
 
-$$pageWhereIdIsParamsId
-
-##### 
-
-$$pagesOrderByCreatedAtDesc
-
-##### browse (for backoffice table views)
-
-load 
-
-- pagesByQuery
+$$pageByQuery
 
 ## alpha thoughts
 
