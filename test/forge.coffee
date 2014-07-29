@@ -319,10 +319,38 @@ module.exports =
         "env var IS_ACTIVE must be 'true' or 'false'"
       )
 
-      test.equals null, factory {
-        PORT: 'dflkdjfl'
-        IS_ACTIVE: ''
+      test.done()
+
+    'envMaybeIntPort': (test) ->
+
+      resolver = forge.newEnvFactoryResolver()
+      factory = resolver {}, 'envMaybeIntPort', ->
+        test.fail()
+
+      test.equals 9000, factory {
+        BASE_URL: '/test'
+        IS_ACTIVE: 'true'
+        PORT: '9000'
       }
+
+      test.equals null, factory {
+        BASE_URL: '/test'
+        PORT: ''
+      }
+
+      test.equals null, factory {
+        BASE_URL: '/test'
+      }
+
+      test.throws(
+        ->
+          factory {
+            PORT: 'dflkdjfl'
+            IS_ACTIVE: 'foo'
+          }
+        Error
+        "env var PORT must be an integer"
+      )
 
       test.done()
 
