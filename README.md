@@ -13,6 +13,10 @@ it allows you to ask for things that don't yet exist.
 
 convention
 
+```javascript
+var forge = require('blaze-forge');
+```
+
 opinionated
 
 - serverside
@@ -27,13 +31,28 @@ opinionated
 
 ### env resolver
 
-`forge.envFactoryResolver`
+```javascript
+var container = {
+  // ...
+  factoryResolvers: [
+    // ...
+    forge.newEnvFactoryResolver()
+    // ...
+  ]
+};
+```
 
-`env[Maybe]{String|Bool|Int|Float}{name}`
+#### `env[Maybe]?{String|Bool|Int|Float}{name}`
 
-examples: 
+- `envIntPort` parses int from envvar `PORT`. throws if not present or not parseable.
+- `envBoolEnableEtags` parses bool from envvar `ENABLE_ETAGS`. throws if not present or not parseable.
+- `envStringDatabaseUrl` reads string from envvar `DATABASE_URL`. throws if not present or blank.
+- `envFloatCommisionPercentage` parses float from envvar `COMMISSION_PERCENTAGE`. throws if not present or not parseable.
+- `envMaybeStringMandrillApikey` reads string from envvar `MANDRILL_APIKEY`. returns null if not present.
+- `envMaybeIntPoolSize` parses int from envvar `POOL_SIZE`. returns null if not present. throws if present and not parseable.
+- ...
 
-returned factories depend on `env`
+returned factories depend on `env`. `env` is provided by [blaze-fragments](https://github.com/snd/blaze-fragments)
 
 ### table resolver
 
