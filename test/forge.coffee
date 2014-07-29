@@ -416,6 +416,59 @@ module.exports =
       test.done()
 
 ###################################################################################
+# table
+
+  'newAliasResolver':
+
+    'inner is passed through': (test) ->
+      test.expect 2
+
+      x = {}
+
+      resolver = forge.newAliasResolver()
+      test.equals x, resolver {}, 'thing', ->
+        test.ok true
+        return x
+
+      test.done()
+
+    'no alias': (test) ->
+      test.expect 2
+
+      x = {}
+
+      resolver = forge.newAliasResolver()
+      test.equals null, resolver {}, 'thing', ->
+        test.ok true
+        return null
+
+      test.done()
+
+    'alias': (test) ->
+      test.expect 2
+
+      c = {}
+      x = {}
+
+      resolver = forge.newAliasResolver
+        alias: 'name'
+
+      callsToInner = []
+      test.equals x, resolver c, 'alias', (args...) ->
+        callsToInner.push args
+        if callsToInner.length is 1
+          null
+        else
+          x
+
+      test.deepEqual callsToInner, [
+        []
+        [c, 'name']
+      ]
+
+      test.done()
+
+###################################################################################
 # data accessor
 
   'parseDataAccessorSpec':

@@ -41,8 +41,6 @@ mesa tables have circular dependencies
 
 returned factories depend on `table`
 
-missing table
-
 ### serverside data accessor resolver
 
 **definition: data accessor:** a function used to get or manipulate

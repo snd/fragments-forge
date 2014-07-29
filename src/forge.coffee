@@ -141,6 +141,22 @@ module.exports.newTableFactoryResolver = ->
       table[tableName]
 
 ###################################################################################
+# alias
+
+module.exports.newAliasResolver = (aliasMap = {}) ->
+  (container, name, inner) ->
+    x = inner()
+    if x?
+      return x
+
+    alias = aliasMap[name]
+
+    unless alias?
+      return
+
+    inner container, alias
+
+###################################################################################
 # data accessor
 
 module.exports.parseDataAccessorSpec = (name) ->
