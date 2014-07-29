@@ -1,11 +1,39 @@
 # blaze-forge
 
-**THOUGHT IN PROGRESS!**
+#### ~~ BLAZE-FORGE IS A WORK IN PROGRESS ~~
+
+blaze-forge is a collection of factory-resolvers for hinoki containers.
 
 blaze-forge is a resolver for hinoki containers that can autogenerate
 common data accessor functions, loaders, etc.
 according to some conventions
 and greatly reduce the amount of code needed.
+
+it allows you to ask for things that don't yet exist.
+
+convention
+
+opinionated
+
+- serverside
+  - [`envIntPort`](#env-resolver)
+  - [`userTable`](#table-resolver)
+  - [`getUserWhereId`, `deleteUserWhereId`](#data-accessor-resolver)
+  - [REST](#)
+- clientside
+  - [`getUserWhereId`](#)
+- shared
+  - [alias -> name](#alias-resolver)
+
+### env resolver
+
+envMaybeInt
+
+### table resolver
+
+mesa tables have circular dependencies
+
+### data accessor resolver
 
 **definition: data accessor:** a function used to get or manipulate
 data in the database
@@ -19,6 +47,8 @@ the data accessor resolver needs a way to look up data specs by name:
 
 you can overwrite everything auto generated if you want
 because the factory resolver is called before the generator resolver
+
+### alias resolver
 
 ### use
 
@@ -140,6 +170,7 @@ generated function returns updated records.
 $$firstPageWhereIdIsParamsId
 
 $$pageWhereIsActive
+
 $$pageOrderByCreatedAtDesc
 
 $$pageByQuery
