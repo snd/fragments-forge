@@ -5,88 +5,90 @@ module.exports =
 ###################################################################################
 # util
 
-  'splitCamelcase': (test) ->
-    test.deepEqual [],
-      forge.splitCamelcase ''
-    test.deepEqual ['a'],
-      forge.splitCamelcase 'a'
-    test.deepEqual ['first'],
-      forge.splitCamelcase 'first'
-    test.deepEqual ['first', 'where', 'id'],
-      forge.splitCamelcase 'firstWhereId'
-    test.deepEqual ['a', 'one', 'a', 'two', 'a', 'three'],
-      forge.splitCamelcase 'aOneATwoAThree'
-    test.deepEqual ['config_url', 'prefix'],
-      forge.splitCamelcase 'config_urlPrefix'
-    test.deepEqual ['pages', 'order', 'by', 'created', 'at', 'desc'],
-      forge.splitCamelcase 'pagesOrderByCreatedAtDesc'
+  'util':
 
-    test.done()
+    'splitCamelcase': (test) ->
+      test.deepEqual [],
+        forge.splitCamelcase ''
+      test.deepEqual ['a'],
+        forge.splitCamelcase 'a'
+      test.deepEqual ['first'],
+        forge.splitCamelcase 'first'
+      test.deepEqual ['first', 'where', 'id'],
+        forge.splitCamelcase 'firstWhereId'
+      test.deepEqual ['a', 'one', 'a', 'two', 'a', 'three'],
+        forge.splitCamelcase 'aOneATwoAThree'
+      test.deepEqual ['config_url', 'prefix'],
+        forge.splitCamelcase 'config_urlPrefix'
+      test.deepEqual ['pages', 'order', 'by', 'created', 'at', 'desc'],
+        forge.splitCamelcase 'pagesOrderByCreatedAtDesc'
 
-  'joinCamelcase': (test) ->
-    test.equals '', forge.joinCamelcase []
-    test.equals 'a', forge.joinCamelcase ['a']
-    test.equals 'first', forge.joinCamelcase ['first']
-    test.equals 'firstWhereId', forge.joinCamelcase ['first', 'where', 'id']
+      test.done()
 
-    test.done()
+    'joinCamelcase': (test) ->
+      test.equals '', forge.joinCamelcase []
+      test.equals 'a', forge.joinCamelcase ['a']
+      test.equals 'first', forge.joinCamelcase ['first']
+      test.equals 'firstWhereId', forge.joinCamelcase ['first', 'where', 'id']
 
-  'findIndex': (test) ->
-    test.equals -1, forge.findIndex [], -> true
-    test.equals 0, forge.findIndex [1], (x) -> x is 1
-    test.equals -1, forge.findIndex [1], (x) -> x is 2
-    test.equals 1, forge.findIndex [1, 2, 3], (x) -> x > 1
-    test.equals -1, forge.findIndex [1, 2, 3], (x) -> x > 3
+      test.done()
 
-    test.done()
+    'findIndex': (test) ->
+      test.equals -1, forge.findIndex [], -> true
+      test.equals 0, forge.findIndex [1], (x) -> x is 1
+      test.equals -1, forge.findIndex [1], (x) -> x is 2
+      test.equals 1, forge.findIndex [1, 2, 3], (x) -> x > 1
+      test.equals -1, forge.findIndex [1, 2, 3], (x) -> x > 3
 
-  'splitWith': (test) ->
-    test.deepEqual [[], []],
-      forge.splitWith [], -> true
-    test.deepEqual [[], [1, 2, 3]],
-      forge.splitWith [1, 2, 3], -> true
-    test.deepEqual [[1, 2, 3], []],
-      forge.splitWith [1, 2, 3], -> false
-    test.deepEqual [[1], [2, 3]],
-      forge.splitWith [1, 2, 3], (x) -> x is 2
+      test.done()
 
-    test.done()
+    'splitWith': (test) ->
+      test.deepEqual [[], []],
+        forge.splitWith [], -> true
+      test.deepEqual [[], [1, 2, 3]],
+        forge.splitWith [1, 2, 3], -> true
+      test.deepEqual [[1, 2, 3], []],
+        forge.splitWith [1, 2, 3], -> false
+      test.deepEqual [[1], [2, 3]],
+        forge.splitWith [1, 2, 3], (x) -> x is 2
 
-  'splitArray': (test) ->
-    test.deepEqual [[]],
-      forge.splitArray [], 'where'
-    test.deepEqual [[], []],
-      forge.splitArray ['where'], 'where'
-    test.deepEqual [['first']],
-      forge.splitArray ['first'], 'where'
-    test.deepEqual [['first', 'order', 'report']],
-      forge.splitArray ['first', 'order', 'report'], 'where'
-    test.deepEqual [['first', 'order', 'report'], []],
-      forge.splitArray ['first', 'order', 'report', 'where'], 'where'
-    test.deepEqual [['first', 'order', 'report'], ['created', 'at']],
-      forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at'], 'where'
-    test.deepEqual [['first', 'order', 'report'], ['created', 'at'], []],
-      forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where'], 'where'
-    test.deepEqual [['first', 'order', 'report'], ['created', 'at'], ['id']],
-      forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where', 'id'], 'where'
+      test.done()
 
-    test.done()
+    'splitArray': (test) ->
+      test.deepEqual [[]],
+        forge.splitArray [], 'where'
+      test.deepEqual [[], []],
+        forge.splitArray ['where'], 'where'
+      test.deepEqual [['first']],
+        forge.splitArray ['first'], 'where'
+      test.deepEqual [['first', 'order', 'report']],
+        forge.splitArray ['first', 'order', 'report'], 'where'
+      test.deepEqual [['first', 'order', 'report'], []],
+        forge.splitArray ['first', 'order', 'report', 'where'], 'where'
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at'], 'where'
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at'], []],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where'], 'where'
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at'], ['id']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where', 'id'], 'where'
 
-  'extractWhereClauses': (test) ->
-    test.deepEqual [], forge.extractWhereClauses []
-    test.deepEqual [], forge.extractWhereClauses ['where']
-    test.deepEqual [], forge.extractWhereClauses ['id']
-    test.deepEqual [['id']], forge.extractWhereClauses ['where', 'id']
-    test.deepEqual [['created', 'at']],
-        forge.extractWhereClauses ['where', 'created', 'at']
-    test.deepEqual [['created', 'at'], ['id']],
-        forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id']
-    test.deepEqual [['created', 'at'], ['id']],
-        forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id', 'where']
-    test.deepEqual [],
-        forge.extractWhereClauses ['id', 'where', 'created', 'at']
+      test.done()
 
-    test.done()
+    'extractWhereClauses': (test) ->
+      test.deepEqual [], forge.extractWhereClauses []
+      test.deepEqual [], forge.extractWhereClauses ['where']
+      test.deepEqual [], forge.extractWhereClauses ['id']
+      test.deepEqual [['id']], forge.extractWhereClauses ['where', 'id']
+      test.deepEqual [['created', 'at']],
+          forge.extractWhereClauses ['where', 'created', 'at']
+      test.deepEqual [['created', 'at'], ['id']],
+          forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id']
+      test.deepEqual [['created', 'at'], ['id']],
+          forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id', 'where']
+      test.deepEqual [],
+          forge.extractWhereClauses ['id', 'where', 'created', 'at']
+
+      test.done()
 
 ###################################################################################
 # env
