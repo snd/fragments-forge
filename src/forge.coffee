@@ -121,14 +121,18 @@ module.exports.newEnvFactoryResolver = ->
 ###################################################################################
 # table
 
-module.exports.newTableFactoryResolver = (name) ->
+module.exports.newTableFactoryResolver = ->
   (container, name, inner) ->
+    factory = inner()
+    if factory?
+      return factory
+
     words = module.exports.splitCamelcase name
 
     unless words[words.length - 1] is 'table'
       return
 
-    unless words.length > 2
+    unless words.length > 1
       return
 
     tableName = module.exports.joinCamelcase words.slice(0, words.length - 1)

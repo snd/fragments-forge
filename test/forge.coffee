@@ -355,6 +355,67 @@ module.exports =
       test.done()
 
 ###################################################################################
+# table
+
+  'newTableFactoryResolver':
+
+    'no match': (test) ->
+      test.expect 2
+
+      resolver = forge.newTableFactoryResolver()
+      test.equals null, resolver {}, 'Table', ->
+        test.ok true
+        return null
+
+      test.done()
+
+    'if inner returns truthy then return that': (test) ->
+      test.expect 2
+
+      resolver = forge.newTableFactoryResolver()
+      factory = {}
+      test.equals factory, resolver {}, 'userTable', ->
+        test.ok true
+        return factory
+
+      test.done()
+
+    'userTable': (test) ->
+      test.expect 3
+
+      resolver = forge.newTableFactoryResolver()
+      factory = resolver {}, 'userTable', ->
+        test.ok true
+        return null
+
+      test.ok factory?
+
+      table =
+        user: {}
+        projectMessage: {}
+
+      test.equals table.user, factory table
+
+      test.done()
+
+    'projectMessageTable': (test) ->
+      test.expect 3
+
+      resolver = forge.newTableFactoryResolver()
+      factory = resolver {}, 'projectMessageTable', ->
+        test.ok true
+        return null
+      test.ok factory?
+
+      table =
+        user: {}
+        projectMessage: {}
+
+      test.equals table.projectMessage, factory table
+
+      test.done()
+
+###################################################################################
 # data accessor
 
   'parseDataAccessorSpec':

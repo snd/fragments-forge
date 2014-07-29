@@ -27,13 +27,23 @@ opinionated
 
 ### env resolver
 
-envMaybeInt
+`forge.envFactoryResolver`
+
+`env[Maybe]{String|Bool|Int|Float}{name}`
+
+examples: 
+
+returned factories depend on `env`
 
 ### table resolver
 
 mesa tables have circular dependencies
 
-### data accessor resolver
+returned factories depend on `table`
+
+missing table
+
+### serverside data accessor resolver
 
 **definition: data accessor:** a function used to get or manipulate
 data in the database
@@ -49,24 +59,6 @@ you can overwrite everything auto generated if you want
 because the factory resolver is called before the generator resolver
 
 ### alias resolver
-
-### use
-
-```coffeescript
-hinoki.defaultResolver = (container, name) ->
-    container.factories?[name]
-
-newDataMethodResolver = (modelNameToDependencyName) ->
-
-container =
-    instances: {}
-    factories: ...
-    resolvers: [
-        hinoki.defaultResolver
-        blazeForge.newDataAccessorResolver (modelName) ->
-        blazeForge.newDataLoaderResolver()
-    ]
-```
 
 ### data accessor patterns
 
