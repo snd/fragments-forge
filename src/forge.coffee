@@ -233,21 +233,31 @@ module.exports.newDataAccessorFactoryResolver = ->
 
     factory = switch spec.type
       when 'first'
-        (table, spec) ->
+        (table, dataSpec) ->
           (args...) ->
-            table.first()
+            query = table
+            spec.where.forEach (x, index) ->
+              condition = {}
+              condition[x] = args[index]
+              query = where condition
+            query.first()
       when 'select'
-        (table, spec) ->
+        (table, dataSpec) ->
           (args...) ->
             table.select
       when 'update'
         () ->
       when 'delete'
-        (table, spec) ->
+        (table, dataSpec) ->
           (args...) ->
-            table.delete
+            query = table
+            spec.where.forEach (x, index) ->
+              condition = {}
+              condition[x] = args[index]
+              query = where condition
+            query.delete()
       when 'insert'
-        (table, spec) ->
+        (table, dataSpec) ->
           (data) ->
             table.insert data
 
