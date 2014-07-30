@@ -48,7 +48,7 @@ var container = {
 - `envBoolEnableEtags` parses bool from envvar `ENABLE_ETAGS`. throws if not present or not parseable.
 - `envStringDatabaseUrl` reads string from envvar `DATABASE_URL`. throws if not present or blank.
 - `envFloatCommisionPercentage` parses float from envvar `COMMISSION_PERCENTAGE`. throws if not present or not parseable.
-- `envMaybeStringMandrillApikey` reads string from envvar `MANDRILL_APIKEY`. returns null if not present.
+- `envMaybeStringMandrillApikey` reads string from envvar `MANDRILL_APIKEY`. returns null if not present or blank.
 - `envMaybeIntPoolSize` parses int from envvar `POOL_SIZE`. returns null if not present. throws if present and not parseable.
 - ...
 

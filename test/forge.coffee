@@ -74,21 +74,21 @@ module.exports =
 
       test.done()
 
-    'extractWhereClauses': (test) ->
-      test.deepEqual [], forge.extractWhereClauses []
-      test.deepEqual [], forge.extractWhereClauses ['where']
-      test.deepEqual [], forge.extractWhereClauses ['id']
-      test.deepEqual [['id']], forge.extractWhereClauses ['where', 'id']
-      test.deepEqual [['created', 'at']],
-          forge.extractWhereClauses ['where', 'created', 'at']
-      test.deepEqual [['created', 'at'], ['id']],
-          forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id']
-      test.deepEqual [['created', 'at'], ['id']],
-          forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id', 'where']
-      test.deepEqual [],
-          forge.extractWhereClauses ['id', 'where', 'created', 'at']
-
-      test.done()
+#     'extractWhereClauses': (test) ->
+#       test.deepEqual [], forge.extractWhereClauses []
+#       test.deepEqual [], forge.extractWhereClauses ['where']
+#       test.deepEqual [], forge.extractWhereClauses ['id']
+#       test.deepEqual [['id']], forge.extractWhereClauses ['where', 'id']
+#       test.deepEqual [['created', 'at']],
+#           forge.extractWhereClauses ['where', 'created', 'at']
+#       test.deepEqual [['created', 'at'], ['id']],
+#           forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id']
+#       test.deepEqual [['created', 'at'], ['id']],
+#           forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id', 'where']
+#       test.deepEqual [],
+#           forge.extractWhereClauses ['id', 'where', 'created', 'at']
+#
+#       test.done()
 
 ###################################################################################
 # env
@@ -478,20 +478,20 @@ module.exports =
     'first': (test) ->
       test.deepEqual forge.parseDataAccessorSpec('firstUser'),
         type: 'first'
-        name: ['user']
+        name: 'user'
         where: []
       test.deepEqual forge.parseDataAccessorSpec('firstUserCreatedAt'),
         type: 'first'
-        name: ['user', 'created', 'at']
+        name: 'userCreatedAt'
         where: []
       test.deepEqual forge.parseDataAccessorSpec('firstUserWhereCreatedAt'),
         type: 'first'
-        name: ['user']
-        where: [['created', 'at']]
+        name: 'user'
+        where: ['createdAt']
       test.deepEqual forge.parseDataAccessorSpec('firstOrderReportWhereIdWhereCreatedAt'),
         type: 'first'
-        name: ['order', 'report']
-        where: [['id'], ['created', 'at']]
+        name: 'orderReport'
+        where: ['id', 'createdAt']
 
       test.done()
 
@@ -499,8 +499,8 @@ module.exports =
       test.ok not forge.parseDataAccessorSpec('deleteOrderReport')?
       test.deepEqual forge.parseDataAccessorSpec('deleteOrderReportWhereId'),
         type: 'delete'
-        name: ['order', 'report']
-        where: [['id']]
+        name: 'orderReport'
+        where: ['id']
 
       test.done()
 
@@ -508,17 +508,17 @@ module.exports =
       test.ok not forge.parseDataAccessorSpec('updateOrderReport')?
       test.deepEqual forge.parseDataAccessorSpec('updateOrderReportWhereRegistrationNumber'),
         type: 'update'
-        name: ['order', 'report']
-        where: [['registration', 'number']]
+        name: 'orderReport'
+        where: ['registrationNumber']
 
       test.done()
 
     'insert': (test) ->
       test.deepEqual forge.parseDataAccessorSpec('insertOrderReport'),
         type: 'insert'
-        name: ['order', 'report']
+        name: 'orderReport'
       test.deepEqual forge.parseDataAccessorSpec('insertUserWhere'),
         type: 'insert'
-        name: ['user', 'where']
+        name: 'userWhere'
 
       test.done()

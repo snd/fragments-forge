@@ -166,12 +166,20 @@ module.exports.parseDataAccessorSpec = (name) ->
 
   partition = module.exports.splitArray rest, 'where'
 
+  tableName = module.exports.joinCamelcase partition[0]
+
   switch words[0]
     when 'first'
       {
         type: 'first'
-        name: partition[0]
-        where: partition.slice(1)
+        name: tableName
+        where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
+      }
+    when 'select'
+      {
+        type: 'select'
+        name: tableName
+        where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
       }
     when 'update'
       # dont allow mass update without condition for security reasons
@@ -179,8 +187,8 @@ module.exports.parseDataAccessorSpec = (name) ->
         return
       {
         type: 'update'
-        name: partition[0]
-        where: partition.slice(1)
+        name: tableName
+        where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
       }
     when 'delete'
       # dont allow mass delete without condition for security reasons
@@ -188,43 +196,64 @@ module.exports.parseDataAccessorSpec = (name) ->
         return
       {
         type: 'delete'
-        name: partition[0]
-        where: partition.slice(1)
+        name: tableName
+        where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
       }
     when 'insert'
+      # TODO dont allow where for insert
       {
         type: 'insert'
-        name: rest
+        name: module.exports.joinCamelcase words.slice(1)
       }
     else
       return
 
-module.exports.extractWhereClauses = (words) ->
-  if words[0] isnt 'where'
-    return []
+# module.exports.extractWhereClauses = (words) ->
+#   if words[0] isnt 'where'
+#     return []
+#
+#   [conditionWords, remainder] = module.exports.splitWith words.slice(1), (x) -> x is 'where'
+#
+#   if conditionWords.length is 0
+#     return []
+#
+#   remainingClauses = module.exports.extractWhereClauses remainder
+#
+#   [conditionWords].concat(remainingClauses)
 
-  [conditionWords, remainder] = module.exports.splitWith words.slice(1), (x) -> x is 'where'
+module.exports.newDataAccessorFactoryResolver = ->
+  (container, name, inner) ->
+    factory = inner()
+    if inner?
+      return inner
 
-  if conditionWords.length is 0
-    return []
-
-  remainingClauses = module.exports.extractWhereClauses remainder
-
-  [conditionWords].concat(remainingClauses)
-
-module.exports.firstDataAccessorSpec = (words) ->
-
-module.exports.newDataAccessorResolver = (modelNameToDependencyName) ->
-  (container, name) ->
-    dataAccessorSpec = module.exports.nameToDataAccessorSpec name
-    if not dataAccessorSpec?
+    spec = module.exports.parseDataAccessorSpec name
+    unless spec?
       return
 
-    dependencyName = modelNameToDependencyName
+    factory = switch spec.type
+      when 'first'
+        (table, spec) ->
+          (args...) ->
+            table.first()
+      when 'select'
+        (table, spec) ->
+          (args...) ->
+            table.select
+      when 'update'
+        () ->
+      when 'delete'
+        (table, spec) ->
+          (args...) ->
+            table.delete
+      when 'insert'
+        (table, spec) ->
+          (data) ->
+            table.insert data
 
-    factory = () ->
-      () ->
+    tableName = spec.name + 'Table'
+    specName = spec.name + 'Spec'
 
-    factory.$inject = []
+    factory.$inject = [tableName, specName]
 
     return factory
