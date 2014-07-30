@@ -2,12 +2,19 @@
 
 #### ~~ BLAZE-FORGE IS A WORK IN PROGRESS ~~
 
+> scrap your boilerplate! by auto-generating boilerplate dependencies based on naming conventions
+
 blaze-forge is a collection of factory-resolvers for hinoki containers.
+
+
+its like rubys method missing.
 
 blaze-forge is a resolver for hinoki containers that can autogenerate
 common data accessor functions, loaders, etc.
 according to some conventions
 and greatly reduce the amount of code needed.
+
+- greatly reduces the amount of code needed
 
 it allows you to ask for things that don't yet exist.
 
@@ -20,16 +27,31 @@ var forge = require('blaze-forge');
 opinionated
 
 - serverside
-  - [`envIntPort`](#env-resolver)
-  - [`userTable`](#table-resolver)
+  - [`envIntPort`, `envMaybeStringMandrillApiKey`, ...](#env-resolver)
+  - [`userTable`, `orderReportTable`, ...](#table-resolver)
   - [`getUserWhereId`, `deleteUserWhereId`](#data-accessor-resolver)
   - [REST](#)
+  - [`$$firstUserWhereIdIsParamsId`]
 - clientside
   - [`getUserWhereId`](#)
 - shared
   - [alias -> name](#alias-resolver)
 
-### env resolver
+### `env[Maybe](String|Bool|Int|Float){name}`
+
+> makes depending on parsed and checked environment variables dead-simple!
+
+- `envIntPort` parses int from envvar `PORT`. throws if not present or not parseable.
+- `envBoolEnableEtags` parses bool from envvar `ENABLE_ETAGS`. throws if not present or not parseable.
+- `envStringDatabaseUrl` reads string from envvar `DATABASE_URL`. throws if not present or blank.
+- `envFloatCommisionPercentage` parses float from envvar `COMMISSION_PERCENTAGE`. throws if not present or not parseable.
+- `envMaybeStringMandrillApikey` reads string from envvar `MANDRILL_APIKEY`. returns null if not present or blank.
+- `envMaybeIntPoolSize` parses int from envvar `POOL_SIZE`. returns null if not present. throws if present and not parseable.
+- ...
+
+#### internals
+
+returned factories depend on `env`. `env` is provided by [blaze-fragments](https://github.com/snd/blaze-fragments)
 
 ```javascript
 var container = {
@@ -42,23 +64,35 @@ var container = {
 };
 ```
 
-#### `env[Maybe]?{String|Bool|Int|Float}{name}`
+### `{tableName}Table`
 
-- `envIntPort` parses int from envvar `PORT`. throws if not present or not parseable.
-- `envBoolEnableEtags` parses bool from envvar `ENABLE_ETAGS`. throws if not present or not parseable.
-- `envStringDatabaseUrl` reads string from envvar `DATABASE_URL`. throws if not present or blank.
-- `envFloatCommisionPercentage` parses float from envvar `COMMISSION_PERCENTAGE`. throws if not present or not parseable.
-- `envMaybeStringMandrillApikey` reads string from envvar `MANDRILL_APIKEY`. returns null if not present or blank.
-- `envMaybeIntPoolSize` parses int from envvar `POOL_SIZE`. returns null if not present. throws if present and not parseable.
+mesa tables often need circular dependencies for associations.
+hinoki doesn't support circular dependencies.
+this resolver removes this mismatch.
+
+just have a `table` factory that returns an object containing
+all the tables.
+
+then require the tables like this:
+
+- `userTable` auto resolves to `table.user`
+- `orderReportTable` auto resolves to `table.orderReport`
 - ...
 
-returned factories depend on `env`. `env` is provided by [blaze-fragments](https://github.com/snd/blaze-fragments)
-
-### table resolver
-
-mesa tables have circular dependencies
+#### internals
 
 returned factories depend on `table`
+
+```javascript
+var container = {
+  // ...
+  factoryResolvers: [
+    // ...
+    forge.newTableFactoryResolver()
+    // ...
+  ]
+};
+```
 
 ### serverside data accessor resolver
 
