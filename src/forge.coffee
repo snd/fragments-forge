@@ -183,6 +183,8 @@ module.exports.parseDataFirst = (name) ->
 
 module.exports.newDataFirstFactoryResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataFirst
+  options.nameToTable ?= (name) ->
+    name + 'Table'
 
   (container, name, inner) ->
     factory = inner()
@@ -203,7 +205,7 @@ module.exports.newDataFirstFactoryResolver = (options = {}) ->
         query.first()
 
     factory.$inject = [
-      match.name
+      options.nameToTable(match.name)
     ]
     factory.$source = 'blaze-forge.newDataFirstFactoryResolver'
     factory.$match = match
@@ -230,6 +232,8 @@ module.exports.parseDataSelect = (name) ->
 
 module.exports.newDataSelectFactoryResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataSelect
+  options.nameToTable ?= (name) ->
+    name + 'Table'
 
   (container, name, inner) ->
     factory = inner()
@@ -250,7 +254,7 @@ module.exports.newDataSelectFactoryResolver = (options = {}) ->
         query.find()
 
     factory.$inject = [
-      match.name
+      options.nameToTable(match.name)
     ]
     factory.$source = 'blaze-forge.newDataSelectFactoryResolver'
     factory.$match = match
@@ -272,6 +276,8 @@ module.exports.parseDataInsert = (name) ->
 
 module.exports.newDataInsertFactoryResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataInsert
+  options.nameToTable ?= (name) ->
+    name + 'Table'
   options.nameToAllowedColumns ?= (name) ->
     name + 'Columns'
 
@@ -291,7 +297,7 @@ module.exports.newDataInsertFactoryResolver = (options = {}) ->
           .insert(data)
 
     factory.$inject = [
-      match.name
+      options.nameToTable(match.name)
       options.nameToAllowedColumns(match.name)
     ]
     factory.$source = 'blaze-forge.newDataInsertFactoryResolver'
@@ -323,6 +329,8 @@ module.exports.parseDataUpdate = (name) ->
 
 module.exports.newDataUpdateFactoryResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataUpdate
+  options.nameToTable ?= (name) ->
+    name + 'Table'
   options.nameToAllowedColumns ?= (name) ->
     name + 'Columns'
 
@@ -347,7 +355,7 @@ module.exports.newDataUpdateFactoryResolver = (options = {}) ->
           .update(data)
 
     factory.$inject = [
-      match.name
+      options.nameToTable(match.name)
       options.nameToAllowedColumns(match.name)
     ]
     factory.$source = 'blaze-forge.newDataUpdateFactoryResolver'
@@ -379,6 +387,8 @@ module.exports.parseDataDelete = (name) ->
 
 module.exports.newDataDeleteFactoryResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataDelete
+  options.nameToTable ?= (name) ->
+    name + 'Table'
 
   (container, name, inner) ->
     factory = inner()
@@ -399,7 +409,7 @@ module.exports.newDataDeleteFactoryResolver = (options = {}) ->
         query.delete()
 
     factory.$inject = [
-      match.name
+      options.nameToTable(match.name)
     ]
     factory.$source = 'blaze-forge.newDataDeleteFactoryResolver'
     factory.$match = match
