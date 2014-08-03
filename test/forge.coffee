@@ -159,7 +159,7 @@ module.exports =
     'envStringBaseUrl': (test) ->
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envStringBaseUrl', ->
-        test.fail()
+        null
 
       test.equals '/test', factory {
         BASE_URL: '/test'
@@ -191,7 +191,7 @@ module.exports =
 
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envBoolIsActive', ->
-        test.fail()
+        null
 
       test.equals true, factory {
         BASE_URL: '/test'
@@ -221,7 +221,7 @@ module.exports =
 
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envIntPort', ->
-        test.fail()
+        null
 
       test.equals 9000, factory {
         BASE_URL: '/test'
@@ -243,7 +243,7 @@ module.exports =
 
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envFloatPi', ->
-        test.fail()
+        null
 
       test.equals 3.141, factory {
         BASE_URL: '/test'
@@ -264,7 +264,7 @@ module.exports =
     'envMaybeStringBaseUrl': (test) ->
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envMaybeStringBaseUrl', ->
-        test.fail()
+        null
 
       test.equals '/test', factory {
         BASE_URL: '/test'
@@ -286,7 +286,7 @@ module.exports =
 
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envMaybeBoolIsActive', ->
-        test.fail()
+        null
 
       test.equals true, factory {
         BASE_URL: '/test'
@@ -327,7 +327,7 @@ module.exports =
 
       resolver = forge.newEnvFactoryResolver()
       factory = resolver {}, 'envMaybeIntPort', ->
-        test.fail()
+        null
 
       test.equals 9000, factory {
         BASE_URL: '/test'
@@ -418,7 +418,7 @@ module.exports =
       test.done()
 
 ###################################################################################
-# table
+# alias
 
   'newAliasResolver':
 
@@ -473,52 +473,58 @@ module.exports =
 ###################################################################################
 # data accessor
 
-  'parseDataAccessorSpec':
+  'parseDataFirst': (test) ->
+    test.deepEqual forge.parseDataFirst('firstUser'),
+      name: 'user'
+      where: []
+    test.deepEqual forge.parseDataFirst('firstUserCreatedAt'),
+      name: 'userCreatedAt'
+      where: []
+    test.deepEqual forge.parseDataFirst('firstUserWhereCreatedAt'),
+      name: 'user'
+      where: ['createdAt']
+    test.deepEqual forge.parseDataFirst('firstOrderReportWhereIdWhereCreatedAt'),
+      name: 'orderReport'
+      where: ['id', 'createdAt']
 
-    'first': (test) ->
-      test.deepEqual forge.parseDataAccessorSpec('firstUser'),
-        type: 'first'
-        name: 'user'
-        where: []
-      test.deepEqual forge.parseDataAccessorSpec('firstUserCreatedAt'),
-        type: 'first'
-        name: 'userCreatedAt'
-        where: []
-      test.deepEqual forge.parseDataAccessorSpec('firstUserWhereCreatedAt'),
-        type: 'first'
-        name: 'user'
-        where: ['createdAt']
-      test.deepEqual forge.parseDataAccessorSpec('firstOrderReportWhereIdWhereCreatedAt'),
-        type: 'first'
-        name: 'orderReport'
-        where: ['id', 'createdAt']
+    test.done()
 
-      test.done()
+  'parseDataSelect': (test) ->
+    test.deepEqual forge.parseDataSelect('selectUser'),
+      name: 'user'
+      where: []
+    test.deepEqual forge.parseDataSelect('selectUserCreatedAt'),
+      name: 'userCreatedAt'
+      where: []
+    test.deepEqual forge.parseDataSelect('selectUserWhereCreatedAt'),
+      name: 'user'
+      where: ['createdAt']
+    test.deepEqual forge.parseDataSelect('selectOrderReportWhereIdWhereCreatedAt'),
+      name: 'orderReport'
+      where: ['id', 'createdAt']
 
-    'delete': (test) ->
-      test.ok not forge.parseDataAccessorSpec('deleteOrderReport')?
-      test.deepEqual forge.parseDataAccessorSpec('deleteOrderReportWhereId'),
-        type: 'delete'
-        name: 'orderReport'
-        where: ['id']
+    test.done()
 
-      test.done()
+  'parseDataInsert': (test) ->
+    test.deepEqual forge.parseDataInsert('insertOrderReport'),
+      name: 'orderReport'
+    test.deepEqual forge.parseDataInsert('insertUserWhere'),
+      name: 'userWhere'
 
-    'delete': (test) ->
-      test.ok not forge.parseDataAccessorSpec('updateOrderReport')?
-      test.deepEqual forge.parseDataAccessorSpec('updateOrderReportWhereRegistrationNumber'),
-        type: 'update'
-        name: 'orderReport'
-        where: ['registrationNumber']
+    test.done()
 
-      test.done()
+  'parseDataUpdate': (test) ->
+    test.ok not forge.parseDataUpdate('updateOrderReport')?
+    test.deepEqual forge.parseDataUpdate('updateOrderReportWhereRegistrationNumber'),
+      name: 'orderReport'
+      where: ['registrationNumber']
 
-    'insert': (test) ->
-      test.deepEqual forge.parseDataAccessorSpec('insertOrderReport'),
-        type: 'insert'
-        name: 'orderReport'
-      test.deepEqual forge.parseDataAccessorSpec('insertUserWhere'),
-        type: 'insert'
-        name: 'userWhere'
+    test.done()
 
-      test.done()
+  'parseDataDelete': (test) ->
+    test.ok not forge.parseDataDelete('deleteOrderReport')?
+    test.deepEqual forge.parseDataDelete('deleteOrderReportWhereId'),
+      name: 'orderReport'
+      where: ['id']
+
+    test.done()
