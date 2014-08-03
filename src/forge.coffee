@@ -291,7 +291,7 @@ module.exports.newDataInsertFactoryResolver = (options = {}) ->
           .insert(data)
 
     factory.$inject = [
-      tableName
+      match.name
       options.nameToAllowedColumns(match.name)
     ]
     factory.$source = 'blaze-forge.newDataInsertFactoryResolver'
