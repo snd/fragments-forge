@@ -33,6 +33,13 @@ module.exports =
 
       test.done()
 
+    'joinUnderscore': (test) ->
+      test.equals '', forge.joinUnderscore []
+      test.equals 'first', forge.joinUnderscore ['first']
+      test.equals 'first_where_id', forge.joinUnderscore ['first', 'where', 'id']
+
+      test.done()
+
     'findIndex': (test) ->
       test.equals -1, forge.findIndex [], -> true
       test.equals 0, forge.findIndex [1], (x) -> x is 1
@@ -73,22 +80,6 @@ module.exports =
         forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where', 'id'], 'where'
 
       test.done()
-
-#     'extractWhereClauses': (test) ->
-#       test.deepEqual [], forge.extractWhereClauses []
-#       test.deepEqual [], forge.extractWhereClauses ['where']
-#       test.deepEqual [], forge.extractWhereClauses ['id']
-#       test.deepEqual [['id']], forge.extractWhereClauses ['where', 'id']
-#       test.deepEqual [['created', 'at']],
-#           forge.extractWhereClauses ['where', 'created', 'at']
-#       test.deepEqual [['created', 'at'], ['id']],
-#           forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id']
-#       test.deepEqual [['created', 'at'], ['id']],
-#           forge.extractWhereClauses ['where', 'created', 'at', 'where', 'id', 'where']
-#       test.deepEqual [],
-#           forge.extractWhereClauses ['id', 'where', 'created', 'at']
-#
-#       test.done()
 
 ###################################################################################
 # env
@@ -482,10 +473,10 @@ module.exports =
       where: []
     test.deepEqual forge.parseDataFirst('firstUserWhereCreatedAt'),
       name: 'user'
-      where: ['createdAt']
+      where: ['created_at']
     test.deepEqual forge.parseDataFirst('firstOrderReportWhereIdWhereCreatedAt'),
       name: 'orderReport'
-      where: ['id', 'createdAt']
+      where: ['id', 'created_at']
 
     test.done()
 
@@ -498,10 +489,10 @@ module.exports =
       where: []
     test.deepEqual forge.parseDataSelect('selectUserWhereCreatedAt'),
       name: 'user'
-      where: ['createdAt']
+      where: ['created_at']
     test.deepEqual forge.parseDataSelect('selectOrderReportWhereIdWhereCreatedAt'),
       name: 'orderReport'
-      where: ['id', 'createdAt']
+      where: ['id', 'created_at']
 
     test.done()
 
@@ -517,14 +508,14 @@ module.exports =
     test.ok not forge.parseDataUpdate('updateOrderReport')?
     test.deepEqual forge.parseDataUpdate('updateOrderReportWhereRegistrationNumber'),
       name: 'orderReport'
-      where: ['registrationNumber']
+      where: ['registration_number']
 
     test.done()
 
   'parseDataDelete': (test) ->
     test.ok not forge.parseDataDelete('deleteOrderReport')?
-    test.deepEqual forge.parseDataDelete('deleteOrderReportWhereId'),
+    test.deepEqual forge.parseDataDelete('deleteOrderReportWhereOrderId'),
       name: 'orderReport'
-      where: ['id']
+      where: ['order_id']
 
     test.done()

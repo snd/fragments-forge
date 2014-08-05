@@ -27,8 +27,8 @@ var forge = require('blaze-forge');
 opinionated
 
 - serverside
-  - [`envIntPort`, `envMaybeStringMandrillApiKey`, ...](#env-resolver)
-  - [`userTable`, `orderReportTable`, ...](#table-resolver)
+  - [`envIntPort`, `envMaybeStringMandrillApiKey`, ...](#envmaybestringboolintfloatname)
+  - [`userTable`, `orderReportTable`, ...](#tablenametable)
   - [`getUserWhereId`, `deleteUserWhereId`](#data-accessor-resolver)
   - [REST](#)
   - [`$$firstUserWhereIdIsParamsId`]
@@ -58,7 +58,7 @@ var container = {
   // ...
   factoryResolvers: [
     // ...
-    forge.newEnvFactoryResolver()
+    forge.newEnvFactoryResolver('env')
     // ...
   ]
 };
@@ -73,7 +73,7 @@ this resolver removes this mismatch.
 just have a `table` factory that returns an object containing
 all the tables.
 
-then require the tables like this:
+then require the tables with this naming convention `{tableName}Table`
 
 - `userTable` auto resolves to `table.user`
 - `orderReportTable` auto resolves to `table.orderReport`
@@ -88,7 +88,7 @@ var container = {
   // ...
   factoryResolvers: [
     // ...
-    forge.newTableFactoryResolver()
+    forge.newTableFactoryResolver('table')
     // ...
   ]
 };

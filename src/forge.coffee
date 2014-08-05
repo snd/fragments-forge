@@ -18,6 +18,10 @@ module.exports.joinCamelcase = (array) ->
     module.exports.uppercaseFirstLetter string.toLowerCase()
   module.exports.lowercaseFirstLetter array.map(capitalize).join('')
 
+# joinUnderscore ['one', 'two', 'three'] => 'one_two_three'
+module.exports.joinUnderscore = (array) ->
+  array.join('_')
+
 # find the index of the first array element for which predicate returns true
 # otherwise returns -1
 module.exports.findIndex = (array, predicate) ->
@@ -184,7 +188,7 @@ module.exports.parseDataFirst = (name) ->
 
   {
     name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
+    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
   }
 
 module.exports.newDataFirstFactoryResolver = (options = {}) ->
@@ -233,7 +237,7 @@ module.exports.parseDataSelect = (name) ->
 
   {
     name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
+    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
   }
 
 module.exports.newDataSelectFactoryResolver = (options = {}) ->
@@ -330,7 +334,7 @@ module.exports.parseDataUpdate = (name) ->
 
   {
     name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
+    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
   }
 
 module.exports.newDataUpdateFactoryResolver = (options = {}) ->
@@ -388,7 +392,7 @@ module.exports.parseDataDelete = (name) ->
 
   {
     name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinCamelcase x
+    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
   }
 
 module.exports.newDataDeleteFactoryResolver = (options = {}) ->
