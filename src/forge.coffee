@@ -59,6 +59,16 @@ module.exports.splitWith = (array, predicate) ->
     return [array, []]
   [array.slice(0, index), array.slice(index)]
 
+module.exports.reverseIndex = (index) ->
+  reverseIndex = {}
+  Object.keys(index).forEach (key) ->
+    value = index[key]
+    unless 'string' is typeof value
+      throw Error 'all keys in index must map to a string'
+    reverseIndex[value] ?= []
+    reverseIndex[value].push key
+  return reverseIndex
+
 ###################################################################################
 # env
 
@@ -425,3 +435,54 @@ module.exports.newDataDeleteFactoryResolver = (options = {}) ->
     factory.$match = match
 
     return factory
+
+module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
+  aliasToNamespaces = module.exports.reverseIndex namespaceToAlias
+  (container, name, inner) ->
+    parts = name.split '_'
+    if parts.length is 1
+      # common case (no namespace part)
+      aliasPart = ''
+      namePart = parts[0]
+    else
+      aliasPart = parts.slice(0, -1).join('_')
+      namePart = parts[parts.length - 1]
+
+    possibleNamespaces = aliasToNamespaces[aliasPart]
+
+    console.log 'aliasPart', aliasPart
+    console.log 'namePart', namePart
+    console.log 'aliasToNamespaces', aliasToNamespaces
+    console.log 'possibleNamespaces', possibleNamespaces
+
+    unless possibleNamespaces?
+      # common case (no mapping for namespace part)
+      return inner()
+
+    results = []
+
+    for namespace in possibleNamespaces
+      do (namespace) ->
+        # call inner multiple times with different ids
+        mappedName = if namespace is ''
+            namePart
+          else
+            [namespace, namePart].join('_')
+        resolved = inner container, mappedName
+        unless 'undefined' is typeof resolved
+          results.push
+            namespace: namespace
+            mappedName: mappedName
+            resolved: resolved
+
+    switch results.length
+      when 0 then inner()
+      when 1 then results[0].resolved
+      else
+        lines = [
+          "ambiguity in namespace resolver."
+          "\"name\" maps to multiple resolvable names:"
+        ]
+        results.forEach (result) ->
+          lines.push "#{result.mappedName} (#{alias} -> #{result.namespace})"
+        throw new Error lines.join('\n')

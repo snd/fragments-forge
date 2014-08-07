@@ -81,6 +81,20 @@ module.exports =
 
       test.done()
 
+    'reverseIndex': (test) ->
+      test.deepEqual {},
+        forge.reverseIndex {}
+      test.throws ->
+        forge.reverseIndex {a: null}
+      test.deepEqual {b: ['a']},
+        forge.reverseIndex {a: 'b'}
+      test.deepEqual {b: ['a', 'c']},
+        forge.reverseIndex {a: 'b', c: 'b'}
+      test.deepEqual {b: ['a', 'c', 'f'], e: ['d', 'i'], h: ['g']},
+        forge.reverseIndex {a: 'b', c: 'b', d: 'e', f: 'b', g: 'h', i: 'e'}
+
+      test.done()
+
 ###################################################################################
 # env
 
@@ -519,3 +533,164 @@ module.exports =
       where: ['order_id']
 
     test.done()
+
+###################################################################################
+# namespace
+
+  'newNamespaceResolver':
+
+    'namespace to global with match with result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat': ''
+      container = {}
+      calls = []
+      test.equals x, resolver container, 'opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+      ]
+
+      test.done()
+
+    'namespace to namespace without match': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat': 'tourist'
+      container = {}
+      calls = []
+      test.equals x, resolver container, 'opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        []
+      ]
+
+      test.done()
+
+    'namespace to namespace with match with result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat': 'tourist'
+      container = {}
+      calls = []
+      test.equals x, resolver container, 'tourist_opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+      ]
+
+      test.done()
+
+    'namespace to namespace with match with null result': (test) ->
+      test.expect 2
+
+      resolver = forge.newNamespaceResolver
+        'acrobat': 'tourist'
+      container = {}
+      calls = []
+      test.equals null, resolver container, 'tourist_opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then null
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+      ]
+
+      test.done()
+
+    'namespace to namespace with match without result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat': 'tourist'
+      calls = []
+      container = {}
+      test.equals x, resolver container, 'tourist_opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then undefined
+          when 2 then x
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+        []
+      ]
+
+      test.done()
+
+    'multi-namespace to namespace with match with result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat_echo': 'tourist'
+      calls = []
+      container = {}
+      test.equals x, resolver container, 'tourist_opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        [container, 'acrobat_echo_opinion']
+      ]
+
+      test.done()
+
+    'namespace to multi-namespace with match with result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        'acrobat': 'tourist_bravo'
+      calls = []
+      container = {}
+      test.equals x, resolver container, 'tourist_bravo_opinion', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+      ]
+
+      test.done()
+
+    'global to multi-namespace with match with result': (test) ->
+      test.expect 2
+
+      x = {}
+      resolver = forge.newNamespaceResolver
+        '': 'tourist_alpha_echo'
+      calls = []
+      container = {}
+      test.equals x, resolver container, 'tourist_alpha_echo_bravo', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+
+      test.deepEqual calls, [
+        [container, 'bravo']
+      ]
+
+      test.done()
+
+      # test multiple mappings and resultions
+      # test error when multiple resolutions
