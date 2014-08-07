@@ -439,6 +439,9 @@ module.exports.newDataDeleteFactoryResolver = (options = {}) ->
 module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
   aliasToNamespaces = module.exports.reverseIndex namespaceToAlias
   (container, name, inner) ->
+    # resolve underscore correctly
+    if name is '_'
+      return inner()
     parts = name.split '_'
     if parts.length is 1
       # common case (no namespace part)
@@ -449,11 +452,6 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
       namePart = parts[parts.length - 1]
 
     possibleNamespaces = aliasToNamespaces[aliasPart]
-
-    console.log 'aliasPart', aliasPart
-    console.log 'namePart', namePart
-    console.log 'aliasToNamespaces', aliasToNamespaces
-    console.log 'possibleNamespaces', possibleNamespaces
 
     unless possibleNamespaces?
       # common case (no mapping for namespace part)

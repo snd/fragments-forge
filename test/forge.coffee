@@ -731,4 +731,75 @@ module.exports =
 
       test.done()
 
-      # test multiple mappings and resultions
+    'complex run': (test) ->
+      test.expect 10
+
+      resolver = forge.newNamespaceResolver
+        'blaze': ''
+        'dragon': ''
+        'url_api': 'urlApi'
+        'util': 'u'
+        'delta': 'u'
+      container = {}
+
+      calls = []
+      x = {}
+      test.equals x, resolver container, 'userAgent', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then undefined
+          when 2 then x
+      test.deepEqual calls, [
+        [container, 'blaze_userAgent']
+        [container, 'dragon_userAgent']
+      ]
+
+      calls = []
+      x = {}
+      test.equals x, resolver container, 'session', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then undefined
+          when 2 then undefined
+          when 3 then x
+      test.deepEqual calls, [
+        [container, 'blaze_session']
+        [container, 'dragon_session']
+        []
+      ]
+
+      calls = []
+      x = {}
+      test.equals x, resolver container, 'urlApi_passwordForgot', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+      test.deepEqual calls, [
+        [container, 'url_api_passwordForgot']
+      ]
+
+      calls = []
+      x = {}
+      test.ok 'undefined' is typeof resolver container, 'urlApi', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then undefined
+          when 2 then undefined
+          when 3 then undefined
+      test.deepEqual calls, [
+        [container, 'blaze_urlApi']
+        [container, 'dragon_urlApi']
+        []
+      ]
+
+      calls = []
+      x = {}
+      test.equals x, resolver container, '_', (args...) ->
+        calls.push args
+        switch calls.length
+          when 1 then x
+      test.deepEqual calls, [
+        []
+      ]
+
+      test.done()
