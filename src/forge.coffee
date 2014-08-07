@@ -102,7 +102,7 @@ module.exports.parseEnvSpec = (name, flagPrefix = 'env') ->
 
 module.exports.newEnvFactoryResolver = (flagPrefix) ->
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -145,7 +145,7 @@ module.exports.newEnvFactoryResolver = (flagPrefix) ->
 
 module.exports.newTableFactoryResolver = ->
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -172,7 +172,7 @@ module.exports.newTableFactoryResolver = ->
 
 module.exports.newAliasResolver = (aliasMap = {}) ->
   (container, name, inner) ->
-    x = inner()
+    x = inner container, name
     if x?
       return x
 
@@ -207,7 +207,7 @@ module.exports.newDataFirstFactoryResolver = (options = {}) ->
     name + 'Table'
 
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -256,7 +256,7 @@ module.exports.newDataSelectFactoryResolver = (options = {}) ->
     name + 'Table'
 
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -302,7 +302,7 @@ module.exports.newDataInsertFactoryResolver = (options = {}) ->
   #   name + 'Columns'
 
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -355,7 +355,7 @@ module.exports.newDataUpdateFactoryResolver = (options = {}) ->
   #   name + 'Columns'
 
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -411,7 +411,7 @@ module.exports.newDataDeleteFactoryResolver = (options = {}) ->
     name + 'Table'
 
   (container, name, inner) ->
-    factory = inner()
+    factory = inner container, name
     if factory?
       return factory
 
@@ -441,7 +441,7 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
   (container, name, inner) ->
     # resolve underscore correctly
     if name is '_'
-      return inner()
+      return inner container, name
     parts = name.split '_'
     if parts.length is 1
       # common case (no namespace part)
@@ -453,9 +453,14 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
 
     possibleNamespaces = aliasToNamespaces[aliasPart]
 
+    # console.log 'aliasPart', aliasPart
+    # console.log 'namePart', namePart
+    # console.log 'aliasToNamespaces', aliasToNamespaces
+    # console.log 'possibleNamespaces', possibleNamespaces
+
     unless possibleNamespaces?
       # common case (no mapping for namespace part)
-      return inner()
+      return inner container, name
 
     results = []
 
@@ -474,7 +479,7 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
             resolved: resolved
 
     switch results.length
-      when 0 then inner()
+      when 0 then inner container, name
       when 1 then results[0].resolved
       else
         lines = [

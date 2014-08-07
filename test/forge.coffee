@@ -469,7 +469,7 @@ module.exports =
           x
 
       test.deepEqual callsToInner, [
-        []
+        [c, 'alias']
         [c, 'name']
       ]
 
@@ -572,7 +572,7 @@ module.exports =
           when 1 then x
 
       test.deepEqual calls, [
-        []
+        [container, 'opinion']
       ]
 
       test.done()
@@ -630,7 +630,7 @@ module.exports =
 
       test.deepEqual calls, [
         [container, 'acrobat_opinion']
-        []
+        [container, 'tourist_opinion']
       ]
 
       test.done()
@@ -765,7 +765,7 @@ module.exports =
       test.deepEqual calls, [
         [container, 'blaze_session']
         [container, 'dragon_session']
-        []
+        [container, 'session']
       ]
 
       calls = []
@@ -789,7 +789,7 @@ module.exports =
       test.deepEqual calls, [
         [container, 'blaze_urlApi']
         [container, 'dragon_urlApi']
-        []
+        [container, 'urlApi']
       ]
 
       calls = []
@@ -799,7 +799,7 @@ module.exports =
         switch calls.length
           when 1 then x
       test.deepEqual calls, [
-        []
+        [container, '_']
       ]
 
       test.done()
