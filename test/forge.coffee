@@ -692,5 +692,43 @@ module.exports =
 
       test.done()
 
+    'ambiguity error': (test) ->
+      test.expect 2
+
+      x = {}
+      y = {}
+      z = {}
+      resolver = forge.newNamespaceResolver
+        'alpha_echo': 'delta'
+        'tourist': 'delta'
+        'bravo': 'delta'
+      calls = []
+      container = {}
+      error = [
+        "ambiguity in namespace resolver."
+        "\"delta_charlie\" maps to multiple resolvable names:"
+        "alpha_echo_charlie (alpha_echo -> delta)"
+        "tourist_charlie (tourist -> delta)"
+        "bravo_charlie (bravo -> delta)"
+      ].join '\n'
+      test.throws(
+        ->
+          resolver container, 'delta_charlie', (args...) ->
+            calls.push args
+            switch calls.length
+              when 1 then x
+              when 2 then y
+              when 2 then z
+        Error
+        error
+      )
+
+      test.deepEqual calls, [
+        [container, 'alpha_echo_charlie']
+        [container, 'tourist_charlie']
+        [container, 'bravo_charlie']
+      ]
+
+      test.done()
+
       # test multiple mappings and resultions
-      # test error when multiple resolutions
