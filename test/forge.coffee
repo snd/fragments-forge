@@ -539,37 +539,54 @@ module.exports =
 
   'newNamespaceResolver':
 
-    'namespace to global with match with result': (test) ->
-      test.expect 2
-
+    'global to namespace with match with result': (test) ->
       x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat': ''
-      container = {}
       calls = []
+      returns = [undefined, x].reverse()
+
+      resolver = forge.newNamespaceResolver
+        '': ['acrobat']
+      container = {}
       test.equals x, resolver container, 'opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
 
       test.deepEqual calls, [
+        [container, 'opinion']
         [container, 'acrobat_opinion']
       ]
 
       test.done()
 
-    'namespace to namespace without match': (test) ->
-      test.expect 2
-
+    'namespace to global with match with result': (test) ->
       x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat': 'tourist'
-      container = {}
       calls = []
-      test.equals x, resolver container, 'opinion', (args...) ->
+      returns = [undefined, x].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'acrobat': ['']
+      container = {}
+      test.equals x, resolver container, 'acrobat_opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
+
+      test.deepEqual calls, [
+        [container, 'acrobat_opinion']
+        [container, 'opinion']
+      ]
+
+      test.done()
+
+    'namespace to namespace without match': (test) ->
+      calls = []
+      returns = [undefined, undefined].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'tourist': ['artist']
+      container = {}
+      test.ok 'undefined' is typeof resolver container, 'opinion', (args...) ->
+        calls.push args
+        return returns.pop()
 
       test.deepEqual calls, [
         [container, 'opinion']
@@ -578,131 +595,108 @@ module.exports =
       test.done()
 
     'namespace to namespace with match with result': (test) ->
-      test.expect 2
-
       x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat': 'tourist'
-      container = {}
       calls = []
+      returns = [undefined, x].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'tourist': ['acrobat']
+      container = {}
       test.equals x, resolver container, 'tourist_opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
 
       test.deepEqual calls, [
+        [container, 'tourist_opinion']
         [container, 'acrobat_opinion']
       ]
 
       test.done()
 
     'namespace to namespace with match with null result': (test) ->
-      test.expect 2
+      calls = []
+      returns = [undefined, null].reverse()
 
       resolver = forge.newNamespaceResolver
-        'acrobat': 'tourist'
+        'tourist': ['acrobat']
       container = {}
-      calls = []
       test.equals null, resolver container, 'tourist_opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then null
+        return returns.pop()
 
       test.deepEqual calls, [
+        [container, 'tourist_opinion']
         [container, 'acrobat_opinion']
       ]
 
       test.done()
 
     'namespace to namespace with match without result': (test) ->
-      test.expect 2
-
       x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat': 'tourist'
       calls = []
+      returns = [undefined, undefined].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'tourist': ['acrobat']
       container = {}
-      test.equals x, resolver container, 'tourist_opinion', (args...) ->
+      test.ok 'undefined' is typeof resolver container, 'tourist_opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then undefined
-          when 2 then x
+        return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'acrobat_opinion']
         [container, 'tourist_opinion']
-      ]
-
-      test.done()
-
-    'multi-namespace to namespace with match with result': (test) ->
-      test.expect 2
-
-      x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat_echo': 'tourist'
-      calls = []
-      container = {}
-      test.equals x, resolver container, 'tourist_opinion', (args...) ->
-        calls.push args
-        switch calls.length
-          when 1 then x
-
-      test.deepEqual calls, [
-        [container, 'acrobat_echo_opinion']
+        [container, 'acrobat_opinion']
       ]
 
       test.done()
 
     'namespace to multi-namespace with match with result': (test) ->
-      test.expect 2
-
       x = {}
-      resolver = forge.newNamespaceResolver
-        'acrobat': 'tourist_bravo'
       calls = []
+      returns = [undefined, x].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'tourist': ['acrobat_echo']
+      container = {}
+      test.equals x, resolver container, 'tourist_opinion', (args...) ->
+        calls.push args
+        return returns.pop()
+
+      test.deepEqual calls, [
+        [container, 'tourist_opinion']
+        [container, 'acrobat_echo_opinion']
+      ]
+
+      test.done()
+
+    'multi-namespace to namespace with match with result': (test) ->
+      x = {}
+      calls = []
+      returns = [undefined, x].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'tourist_bravo': ['acrobat']
       container = {}
       test.equals x, resolver container, 'tourist_bravo_opinion', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
 
       test.deepEqual calls, [
+        [container, 'tourist_bravo_opinion']
         [container, 'acrobat_opinion']
       ]
 
       test.done()
 
-    'global to multi-namespace with match with result': (test) ->
-      test.expect 2
-
-      x = {}
-      resolver = forge.newNamespaceResolver
-        '': 'tourist_alpha_echo'
-      calls = []
-      container = {}
-      test.equals x, resolver container, 'tourist_alpha_echo_bravo', (args...) ->
-        calls.push args
-        switch calls.length
-          when 1 then x
-
-      test.deepEqual calls, [
-        [container, 'bravo']
-      ]
-
-      test.done()
-
     'ambiguity error': (test) ->
-      test.expect 2
-
       x = {}
       y = {}
       z = {}
-      resolver = forge.newNamespaceResolver
-        'alpha_echo': 'delta'
-        'tourist': 'delta'
-        'bravo': 'delta'
       calls = []
+      returns = [undefined, x, y, z].reverse()
+
+      resolver = forge.newNamespaceResolver
+        'delta': ['alpha_echo', 'tourist', 'bravo']
       container = {}
       error = [
         "ambiguity in namespace resolver."
@@ -715,15 +709,13 @@ module.exports =
         ->
           resolver container, 'delta_charlie', (args...) ->
             calls.push args
-            switch calls.length
-              when 1 then x
-              when 2 then y
-              when 2 then z
+            return returns.pop()
         Error
         error
       )
 
       test.deepEqual calls, [
+        [container, 'delta_charlie']
         [container, 'alpha_echo_charlie']
         [container, 'tourist_charlie']
         [container, 'bravo_charlie']
@@ -732,72 +724,66 @@ module.exports =
       test.done()
 
     'complex run': (test) ->
-      test.expect 10
-
       resolver = forge.newNamespaceResolver
-        'blaze': ''
-        'dragon': ''
-        'url_api': 'urlApi'
-        'util': 'u'
-        'delta': 'u'
+        '': ['blaze', 'dragon']
+        'u': ['util', 'delta']
+        'urlApi': ['url_api']
+        'blaze_port': ['']
       container = {}
 
-      calls = []
       x = {}
+      calls = []
+      returns = [undefined, undefined, x].reverse()
       test.equals x, resolver container, 'userAgent', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then undefined
-          when 2 then x
+        return returns.pop()
       test.deepEqual calls, [
+        [container, 'userAgent']
         [container, 'blaze_userAgent']
         [container, 'dragon_userAgent']
       ]
 
-      calls = []
       x = {}
+      calls = []
+      returns = [undefined, undefined, x].reverse()
       test.equals x, resolver container, 'session', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then undefined
-          when 2 then undefined
-          when 3 then x
+        return returns.pop()
       test.deepEqual calls, [
+        [container, 'session']
         [container, 'blaze_session']
         [container, 'dragon_session']
-        [container, 'session']
       ]
 
-      calls = []
       x = {}
+      calls = []
+      returns = [undefined, x].reverse()
       test.equals x, resolver container, 'urlApi_passwordForgot', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
       test.deepEqual calls, [
+        [container, 'urlApi_passwordForgot']
         [container, 'url_api_passwordForgot']
       ]
 
-      calls = []
       x = {}
+      calls = []
+      returns = [undefined, undefined, undefined].reverse()
       test.ok 'undefined' is typeof resolver container, 'urlApi', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then undefined
-          when 2 then undefined
-          when 3 then undefined
+        return returns.pop()
       test.deepEqual calls, [
+        [container, 'urlApi']
         [container, 'blaze_urlApi']
         [container, 'dragon_urlApi']
-        [container, 'urlApi']
       ]
 
-      calls = []
       x = {}
+      calls = []
+      returns = [x].reverse()
       test.equals x, resolver container, '_', (args...) ->
         calls.push args
-        switch calls.length
-          when 1 then x
+        return returns.pop()
       test.deepEqual calls, [
         [container, '_']
       ]

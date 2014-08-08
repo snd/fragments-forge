@@ -436,12 +436,15 @@ module.exports.newDataDeleteFactoryResolver = (options = {}) ->
 
     return factory
 
-module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
-  aliasToNamespaces = module.exports.reverseIndex namespaceToAlias
+module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
   (container, name, inner) ->
-    # resolve underscore correctly
-    if name is '_'
-      return inner container, name
+    # if the name is directly resolvable return it
+    value = inner container, name
+    unless 'undefined' is typeof value
+      return value
+
+    # otherwise try out namespace mappings
+
     parts = name.split '_'
     if parts.length is 1
       # common case (no namespace part)
@@ -460,7 +463,10 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
 
     unless possibleNamespaces?
       # common case (no mapping for namespace part)
-      return inner container, name
+      return
+
+    unless Array.isArray possibleNamespaces
+      throw new Error 'values in aliasToNamespaces must be arrays'
 
     results = []
 
@@ -478,8 +484,8 @@ module.exports.newNamespaceResolver = (namespaceToAlias = {}) ->
             mappedName: mappedName
             resolved: resolved
 
-    switch results.length
-      when 0 then inner container, name
+    return switch results.length
+      when 0 then undefined
       when 1 then results[0].resolved
       else
         lines = [
