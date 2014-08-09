@@ -344,7 +344,7 @@ module.exports.newDataInsertResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher name
+    match = options.matcher query.name
     unless match?
       return
 
@@ -404,7 +404,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher name
+    match = options.matcher query.name
     unless match?
       return
 
@@ -462,12 +462,12 @@ module.exports.newDataDeleteResolver = (options = {}) ->
   options.nameToTable ?= (name) ->
     name + 'Table'
 
-  resolve = (query, inner) ->
+  resolver = (query, inner) ->
     result = inner query
     if result?
       return result
 
-    match = options.matcher name
+    match = options.matcher query.name
     unless match?
       return
 
