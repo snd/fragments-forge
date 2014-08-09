@@ -150,23 +150,33 @@ module.exports =
 
   'newEnvFactoryResolver':
 
-    'no match': (test) ->
+    'passthrough': (test) ->
       test.expect 2
 
-      resolver = forge.newEnvFactoryResolver()
+      resolver = forge.newEnvResolver()
       factory = {}
-      test.equals factory, resolver {}, 'configPort', ->
-        test.ok true
+      query =
+        name: 'envIntPort'
+        container: {}
+      test.equals factory, resolver query, (arg) ->
+        test.equals query, arg
         return factory
 
       test.done()
 
     'envStringBaseUrl': (test) ->
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envStringBaseUrl', ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envStringBaseUrl'
+        container: {}
+      result = resolver query, (arg) ->
+        test.equals query, arg
         null
 
-      test.equals '/test', factory {
+      test.equals result.name, query.name
+      test.equals result.container, query.container
+
+      test.equals '/test', result.factory {
         BASE_URL: '/test'
         PORT: '9000'
       }
@@ -183,7 +193,7 @@ module.exports =
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PORT: '9000'
           }
         Error
@@ -193,18 +203,19 @@ module.exports =
       test.done()
 
     'envBoolIsActive': (test) ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envBoolIsActive'
+        container: {}
+      result = resolver query, ->
 
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envBoolIsActive', ->
-        null
-
-      test.equals true, factory {
+      test.equals true, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: 'true'
         PORT: '9000'
       }
 
-      test.equals false, factory {
+      test.equals false, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: 'false'
         PORT: '9000'
@@ -212,7 +223,7 @@ module.exports =
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PORT: 'dflkdjfl'
             IS_ACTIVE: 'foo'
           }
@@ -223,19 +234,20 @@ module.exports =
       test.done()
 
     'envIntPort': (test) ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envIntPort'
+        container: {}
+      result = resolver query, ->
 
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envIntPort', ->
-        null
-
-      test.equals 9000, factory {
+      test.equals 9000, result.factory {
         BASE_URL: '/test'
         PORT: '9000'
       }
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PORT: 'dflkdjfl'
           }
         Error
@@ -245,19 +257,20 @@ module.exports =
       test.done()
 
     'envFloatPi': (test) ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envFloatPi'
+        container: {}
+      result = resolver query, ->
 
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envFloatPi', ->
-        null
-
-      test.equals 3.141, factory {
+      test.equals 3.141, result.factory {
         BASE_URL: '/test'
         PI: '3.141'
       }
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PI: 'dflkdjfl'
           }
         Error
@@ -267,58 +280,61 @@ module.exports =
       test.done()
 
     'envMaybeStringBaseUrl': (test) ->
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envMaybeStringBaseUrl', ->
-        null
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envMaybeStringBaseUrl'
+        container: {}
+      result = resolver query, ->
 
-      test.equals '/test', factory {
+      test.equals '/test', result.factory {
         BASE_URL: '/test'
         PORT: '9000'
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         BASE_URL: ''
         PORT: '9000'
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         PORT: '9000'
       }
 
       test.done()
 
     'envMaybeBoolIsActive': (test) ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envMaybeBoolIsActive'
+        container: {}
+      result = resolver query, ->
 
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envMaybeBoolIsActive', ->
-        null
-
-      test.equals true, factory {
+      test.equals true, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: 'true'
         PORT: '9000'
       }
 
-      test.equals false, factory {
+      test.equals false, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: 'false'
         PORT: '9000'
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: ''
         PORT: '9000'
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         BASE_URL: '/test'
         PORT: '9000'
       }
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PORT: 'dflkdjfl'
             IS_ACTIVE: 'foo'
           }
@@ -329,29 +345,30 @@ module.exports =
       test.done()
 
     'envMaybeIntPort': (test) ->
+      resolver = forge.newEnvResolver()
+      query =
+        name: 'envMaybeIntPort'
+        container: {}
+      result = resolver query, ->
 
-      resolver = forge.newEnvFactoryResolver()
-      factory = resolver {}, 'envMaybeIntPort', ->
-        null
-
-      test.equals 9000, factory {
+      test.equals 9000, result.factory {
         BASE_URL: '/test'
         IS_ACTIVE: 'true'
         PORT: '9000'
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         BASE_URL: '/test'
         PORT: ''
       }
 
-      test.equals null, factory {
+      test.equals null, result.factory {
         BASE_URL: '/test'
       }
 
       test.throws(
         ->
-          factory {
+          result.factory {
             PORT: 'dflkdjfl'
             IS_ACTIVE: 'foo'
           }
@@ -367,58 +384,65 @@ module.exports =
   'newTableFactoryResolver':
 
     'no match': (test) ->
-      test.expect 2
-
-      resolver = forge.newTableFactoryResolver()
-      test.equals null, resolver {}, 'Table', ->
-        test.ok true
+      resolver = forge.newTableResolver()
+      query =
+        name: 'Table'
+        container: {}
+      test.equals null, resolver query, (arg) ->
+        test.equals arg, query
         return null
 
       test.done()
 
     'if inner returns truthy then return that': (test) ->
-      test.expect 2
-
-      resolver = forge.newTableFactoryResolver()
-      factory = {}
-      test.equals factory, resolver {}, 'userTable', ->
-        test.ok true
-        return factory
+      resolver = forge.newTableResolver()
+      factoryResult = {}
+      query =
+        name: 'userTable'
+        container: {}
+      test.equals factoryResult, resolver query, (arg) ->
+        test.equals query, arg
+        return factoryResult
 
       test.done()
 
     'userTable': (test) ->
-      test.expect 3
-
-      resolver = forge.newTableFactoryResolver()
-      factory = resolver {}, 'userTable', ->
-        test.ok true
+      resolver = forge.newTableResolver()
+      factoryResult = {}
+      query =
+        name: 'userTable'
+        container: {}
+      result = resolver query, (arg) ->
+        test.equals query, arg
         return null
 
-      test.ok factory?
+      test.ok result?
 
       table =
         user: {}
         projectMessage: {}
 
-      test.equals table.user, factory table
+      test.equals table.user, result.factory table
 
       test.done()
 
     'projectMessageTable': (test) ->
-      test.expect 3
-
-      resolver = forge.newTableFactoryResolver()
-      factory = resolver {}, 'projectMessageTable', ->
-        test.ok true
+      resolver = forge.newTableResolver()
+      factoryResult = {}
+      query =
+        name: 'projectMessageTable'
+        container: {}
+      result = resolver query, (arg) ->
+        test.equals query, arg
         return null
-      test.ok factory?
+
+      test.ok result?
 
       table =
         user: {}
         projectMessage: {}
 
-      test.equals table.projectMessage, factory table
+      test.equals table.projectMessage, result.factory table
 
       test.done()
 
@@ -427,50 +451,53 @@ module.exports =
 
   'newAliasResolver':
 
-    'inner is passed through': (test) ->
-      test.expect 2
-
+    'passthrough': (test) ->
       x = {}
 
       resolver = forge.newAliasResolver()
-      test.equals x, resolver {}, 'thing', ->
-        test.ok true
+      query =
+        name: 'thing'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        test.equals query, arg
         return x
 
       test.done()
 
     'no alias': (test) ->
-      test.expect 2
-
       x = {}
 
       resolver = forge.newAliasResolver()
-      test.equals null, resolver {}, 'thing', ->
-        test.ok true
+      query =
+        name: 'thing'
+        container: {}
+      test.equals null, resolver query, (arg) ->
+        test.equals query, arg
         return null
 
       test.done()
 
     'alias': (test) ->
-      test.expect 2
-
-      c = {}
       x = {}
 
       resolver = forge.newAliasResolver
         alias: 'name'
 
-      callsToInner = []
-      test.equals x, resolver c, 'alias', (args...) ->
-        callsToInner.push args
-        if callsToInner.length is 1
+      query =
+        name: 'alias'
+        container: {}
+
+      calls = []
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
+        if calls.length is 1
           null
         else
           x
 
-      test.deepEqual callsToInner, [
-        [c, 'alias']
-        [c, 'name']
+      test.deepEqual calls, [
+        {name: 'alias', container: query.container}
+        {name: 'name', container: query.container}
       ]
 
       test.done()
@@ -546,14 +573,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         '': ['acrobat']
-      container = {}
-      test.equals x, resolver container, 'opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'opinion'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'opinion']
-        [container, 'acrobat_opinion']
+        {container: query.container, name: 'opinion'}
+        {container: query.container, name: 'acrobat_opinion'}
       ]
 
       test.done()
@@ -565,14 +594,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'acrobat': ['']
-      container = {}
-      test.equals x, resolver container, 'acrobat_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'acrobat_opinion'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'acrobat_opinion']
-        [container, 'opinion']
+        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, name: 'opinion'}
       ]
 
       test.done()
@@ -583,13 +614,15 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist': ['artist']
-      container = {}
-      test.ok 'undefined' is typeof resolver container, 'opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'opinion'
+        container: {}
+      test.ok 'undefined' is typeof resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'opinion']
+        {container: query.container, name: 'opinion'}
       ]
 
       test.done()
@@ -601,14 +634,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
-      container = {}
-      test.equals x, resolver container, 'tourist_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'tourist_opinion'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'tourist_opinion']
-        [container, 'acrobat_opinion']
+        {container: query.container, name: 'tourist_opinion'}
+        {container: query.container, name: 'acrobat_opinion'}
       ]
 
       test.done()
@@ -619,14 +654,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
-      container = {}
-      test.equals null, resolver container, 'tourist_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'tourist_opinion'
+        container: {}
+      test.equals null, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'tourist_opinion']
-        [container, 'acrobat_opinion']
+        {container: query.container, name: 'tourist_opinion'}
+        {container: query.container, name: 'acrobat_opinion'}
       ]
 
       test.done()
@@ -638,14 +675,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
-      container = {}
-      test.ok 'undefined' is typeof resolver container, 'tourist_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'tourist_opinion'
+        container: {}
+      test.ok 'undefined' is typeof resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'tourist_opinion']
-        [container, 'acrobat_opinion']
+        {container: query.container, name: 'tourist_opinion'}
+        {container: query.container, name: 'acrobat_opinion'}
       ]
 
       test.done()
@@ -657,14 +696,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat_echo']
-      container = {}
-      test.equals x, resolver container, 'tourist_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'tourist_opinion'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'tourist_opinion']
-        [container, 'acrobat_echo_opinion']
+        {container: query.container, name: 'tourist_opinion'}
+        {container: query.container, name: 'acrobat_echo_opinion'}
       ]
 
       test.done()
@@ -676,14 +717,16 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'tourist_bravo': ['acrobat']
-      container = {}
-      test.equals x, resolver container, 'tourist_bravo_opinion', (args...) ->
-        calls.push args
+      query =
+        name: 'tourist_bravo_opinion'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        [container, 'tourist_bravo_opinion']
-        [container, 'acrobat_opinion']
+        {container: query.container, name: 'tourist_bravo_opinion'}
+        {container: query.container, name: 'acrobat_opinion'}
       ]
 
       test.done()
@@ -697,7 +740,9 @@ module.exports =
 
       resolver = forge.newNamespaceResolver
         'delta': ['alpha_echo', 'tourist', 'bravo']
-      container = {}
+      query =
+        name: 'delta_charlie'
+        container: {}
       error = [
         "ambiguity in namespace resolver."
         "\"delta_charlie\" maps to multiple resolvable names:"
@@ -707,18 +752,18 @@ module.exports =
       ].join '\n'
       test.throws(
         ->
-          resolver container, 'delta_charlie', (args...) ->
-            calls.push args
+          resolver query, (arg) ->
+            calls.push arg
             return returns.pop()
         Error
         error
       )
 
       test.deepEqual calls, [
-        [container, 'delta_charlie']
-        [container, 'alpha_echo_charlie']
-        [container, 'tourist_charlie']
-        [container, 'bravo_charlie']
+        {container: query.container, name: 'delta_charlie'}
+        {container: query.container, name: 'alpha_echo_charlie'}
+        {container: query.container, name: 'tourist_charlie'}
+        {container: query.container, name: 'bravo_charlie'}
       ]
 
       test.done()
@@ -734,58 +779,58 @@ module.exports =
       x = {}
       calls = []
       returns = [undefined, undefined, x].reverse()
-      test.equals x, resolver container, 'userAgent', (args...) ->
-        calls.push args
+      query =
+        name: 'userAgent'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        [container, 'userAgent']
-        [container, 'blaze_userAgent']
-        [container, 'dragon_userAgent']
-      ]
-
-      x = {}
-      calls = []
-      returns = [undefined, undefined, x].reverse()
-      test.equals x, resolver container, 'session', (args...) ->
-        calls.push args
-        return returns.pop()
-      test.deepEqual calls, [
-        [container, 'session']
-        [container, 'blaze_session']
-        [container, 'dragon_session']
+        {container: query.container, name: 'userAgent'}
+        {container: query.container, name: 'blaze_userAgent'}
+        {container: query.container, name: 'dragon_userAgent'}
       ]
 
       x = {}
       calls = []
       returns = [undefined, x].reverse()
-      test.equals x, resolver container, 'urlApi_passwordForgot', (args...) ->
-        calls.push args
+      query =
+        name: 'urlApi_passwordForgot'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        [container, 'urlApi_passwordForgot']
-        [container, 'url_api_passwordForgot']
+        {container: query.container, name: 'urlApi_passwordForgot'}
+        {container: query.container, name: 'url_api_passwordForgot'}
       ]
 
       x = {}
       calls = []
       returns = [undefined, undefined, undefined].reverse()
-      test.ok 'undefined' is typeof resolver container, 'urlApi', (args...) ->
-        calls.push args
+      query =
+        name: 'urlApi'
+        container: {}
+      test.ok 'undefined' is typeof resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        [container, 'urlApi']
-        [container, 'blaze_urlApi']
-        [container, 'dragon_urlApi']
+        {container: query.container, name: 'urlApi'}
+        {container: query.container, name: 'blaze_urlApi'}
+        {container: query.container, name: 'dragon_urlApi'}
       ]
 
       x = {}
       calls = []
       returns = [x].reverse()
-      test.equals x, resolver container, '_', (args...) ->
-        calls.push args
+      query =
+        name: '_'
+        container: {}
+      test.equals x, resolver query, (arg) ->
+        calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        [container, '_']
+        {container: query.container, name: '_'}
       ]
 
       test.done()
