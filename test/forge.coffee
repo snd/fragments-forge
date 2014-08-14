@@ -156,7 +156,7 @@ module.exports =
       resolver = forge.newEnvResolver()
       factory = {}
       query =
-        name: 'envIntPort'
+        path: ['envIntPort']
         container: {}
       test.equals factory, resolver query, (arg) ->
         test.equals query, arg
@@ -167,13 +167,13 @@ module.exports =
     'envStringBaseUrl': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envStringBaseUrl'
+        path: ['envStringBaseUrl']
         container: {}
       result = resolver query, (arg) ->
         test.equals query, arg
         null
 
-      test.equals result.name, query.name
+      test.equals result.path, query.path
       test.equals result.container, query.container
 
       test.equals '/test', result.factory {
@@ -205,7 +205,7 @@ module.exports =
     'envBoolIsActive': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envBoolIsActive'
+        path: ['envBoolIsActive']
         container: {}
       result = resolver query, ->
 
@@ -236,7 +236,7 @@ module.exports =
     'envIntPort': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envIntPort'
+        path: ['envIntPort']
         container: {}
       result = resolver query, ->
 
@@ -259,7 +259,7 @@ module.exports =
     'envFloatPi': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envFloatPi'
+        path: ['envFloatPi']
         container: {}
       result = resolver query, ->
 
@@ -282,7 +282,7 @@ module.exports =
     'envMaybeStringBaseUrl': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envMaybeStringBaseUrl'
+        path: ['envMaybeStringBaseUrl']
         container: {}
       result = resolver query, ->
 
@@ -305,7 +305,7 @@ module.exports =
     'envMaybeBoolIsActive': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envMaybeBoolIsActive'
+        path: ['envMaybeBoolIsActive']
         container: {}
       result = resolver query, ->
 
@@ -347,7 +347,7 @@ module.exports =
     'envMaybeIntPort': (test) ->
       resolver = forge.newEnvResolver()
       query =
-        name: 'envMaybeIntPort'
+        path: ['envMaybeIntPort']
         container: {}
       result = resolver query, ->
 
@@ -386,7 +386,7 @@ module.exports =
     'no match': (test) ->
       resolver = forge.newTableResolver()
       query =
-        name: 'Table'
+        path: ['Table']
         container: {}
       test.equals null, resolver query, (arg) ->
         test.equals arg, query
@@ -398,7 +398,7 @@ module.exports =
       resolver = forge.newTableResolver()
       factoryResult = {}
       query =
-        name: 'userTable'
+        path: ['userTable']
         container: {}
       test.equals factoryResult, resolver query, (arg) ->
         test.equals query, arg
@@ -410,7 +410,7 @@ module.exports =
       resolver = forge.newTableResolver()
       factoryResult = {}
       query =
-        name: 'userTable'
+        path: ['userTable']
         container: {}
       result = resolver query, (arg) ->
         test.equals query, arg
@@ -430,7 +430,7 @@ module.exports =
       resolver = forge.newTableResolver()
       factoryResult = {}
       query =
-        name: 'projectMessageTable'
+        path: ['projectMessageTable']
         container: {}
       result = resolver query, (arg) ->
         test.equals query, arg
@@ -456,7 +456,7 @@ module.exports =
 
       resolver = forge.newAliasResolver()
       query =
-        name: 'thing'
+        path: ['thing']
         container: {}
       test.equals x, resolver query, (arg) ->
         test.equals query, arg
@@ -469,7 +469,7 @@ module.exports =
 
       resolver = forge.newAliasResolver()
       query =
-        name: 'thing'
+        path: ['thing']
         container: {}
       test.equals null, resolver query, (arg) ->
         test.equals query, arg
@@ -484,7 +484,7 @@ module.exports =
         alias: 'name'
 
       query =
-        name: 'alias'
+        path: ['alias']
         container: {}
 
       calls = []
@@ -496,8 +496,8 @@ module.exports =
           x
 
       test.deepEqual calls, [
-        {name: 'alias', container: query.container}
-        {name: 'name', container: query.container}
+        {path: ['alias'], container: query.container}
+        {path: ['name'], container: query.container}
       ]
 
       test.done()
@@ -574,15 +574,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         '': ['acrobat']
       query =
-        name: 'opinion'
+        path: ['opinion']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'opinion'}
-        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, path: ['opinion']}
+        {container: query.container, path: ['acrobat_opinion']}
       ]
 
       test.done()
@@ -595,15 +595,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'acrobat': ['']
       query =
-        name: 'acrobat_opinion'
+        path: ['acrobat_opinion']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'acrobat_opinion'}
-        {container: query.container, name: 'opinion'}
+        {container: query.container, path: ['acrobat_opinion']}
+        {container: query.container, path: ['opinion']}
       ]
 
       test.done()
@@ -615,14 +615,14 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist': ['artist']
       query =
-        name: 'opinion'
+        path: ['opinion']
         container: {}
       test.ok 'undefined' is typeof resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'opinion'}
+        {container: query.container, path: ['opinion']}
       ]
 
       test.done()
@@ -635,15 +635,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
       query =
-        name: 'tourist_opinion'
+        path: ['tourist_opinion']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'tourist_opinion'}
-        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, path: ['tourist_opinion']}
+        {container: query.container, path: ['acrobat_opinion']}
       ]
 
       test.done()
@@ -655,15 +655,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
       query =
-        name: 'tourist_opinion'
+        path: ['tourist_opinion']
         container: {}
       test.equals null, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'tourist_opinion'}
-        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, path: ['tourist_opinion']}
+        {container: query.container, path: ['acrobat_opinion']}
       ]
 
       test.done()
@@ -676,15 +676,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat']
       query =
-        name: 'tourist_opinion'
+        path: ['tourist_opinion']
         container: {}
       test.ok 'undefined' is typeof resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'tourist_opinion'}
-        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, path: ['tourist_opinion']}
+        {container: query.container, path: ['acrobat_opinion']}
       ]
 
       test.done()
@@ -697,15 +697,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist': ['acrobat_echo']
       query =
-        name: 'tourist_opinion'
+        path: ['tourist_opinion']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'tourist_opinion'}
-        {container: query.container, name: 'acrobat_echo_opinion'}
+        {container: query.container, path: ['tourist_opinion']}
+        {container: query.container, path: ['acrobat_echo_opinion']}
       ]
 
       test.done()
@@ -718,15 +718,15 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'tourist_bravo': ['acrobat']
       query =
-        name: 'tourist_bravo_opinion'
+        path: ['tourist_bravo_opinion']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
       test.deepEqual calls, [
-        {container: query.container, name: 'tourist_bravo_opinion'}
-        {container: query.container, name: 'acrobat_opinion'}
+        {container: query.container, path: ['tourist_bravo_opinion']}
+        {container: query.container, path: ['acrobat_opinion']}
       ]
 
       test.done()
@@ -741,7 +741,7 @@ module.exports =
       resolver = forge.newNamespaceResolver
         'delta': ['alpha_echo', 'tourist', 'bravo']
       query =
-        name: 'delta_charlie'
+        path: ['delta_charlie']
         container: {}
       error = [
         "ambiguity in namespace resolver."
@@ -760,10 +760,10 @@ module.exports =
       )
 
       test.deepEqual calls, [
-        {container: query.container, name: 'delta_charlie'}
-        {container: query.container, name: 'alpha_echo_charlie'}
-        {container: query.container, name: 'tourist_charlie'}
-        {container: query.container, name: 'bravo_charlie'}
+        {container: query.container, path: ['delta_charlie']}
+        {container: query.container, path: ['alpha_echo_charlie']}
+        {container: query.container, path: ['tourist_charlie']}
+        {container: query.container, path: ['bravo_charlie']}
       ]
 
       test.done()
@@ -780,57 +780,57 @@ module.exports =
       calls = []
       returns = [undefined, undefined, x].reverse()
       query =
-        name: 'userAgent'
+        path: ['userAgent']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        {container: query.container, name: 'userAgent'}
-        {container: query.container, name: 'blaze_userAgent'}
-        {container: query.container, name: 'dragon_userAgent'}
+        {container: query.container, path: ['userAgent']}
+        {container: query.container, path: ['blaze_userAgent']}
+        {container: query.container, path: ['dragon_userAgent']}
       ]
 
       x = {}
       calls = []
       returns = [undefined, x].reverse()
       query =
-        name: 'urlApi_passwordForgot'
+        path: ['urlApi_passwordForgot']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        {container: query.container, name: 'urlApi_passwordForgot'}
-        {container: query.container, name: 'url_api_passwordForgot'}
+        {container: query.container, path: ['urlApi_passwordForgot']}
+        {container: query.container, path: ['url_api_passwordForgot']}
       ]
 
       x = {}
       calls = []
       returns = [undefined, undefined, undefined].reverse()
       query =
-        name: 'urlApi'
+        path: ['urlApi']
         container: {}
       test.ok 'undefined' is typeof resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        {container: query.container, name: 'urlApi'}
-        {container: query.container, name: 'blaze_urlApi'}
-        {container: query.container, name: 'dragon_urlApi'}
+        {container: query.container, path: ['urlApi']}
+        {container: query.container, path: ['blaze_urlApi']}
+        {container: query.container, path: ['dragon_urlApi']}
       ]
 
       x = {}
       calls = []
       returns = [x].reverse()
       query =
-        name: '_'
+        path: ['_']
         container: {}
       test.equals x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
-        {container: query.container, name: '_'}
+        {container: query.container, path: ['_']}
       ]
 
       test.done()

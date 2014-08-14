@@ -107,7 +107,9 @@ module.exports.newEnvResolver = (flagPrefix) ->
     if result?
       return result
 
-    spec = module.exports.parseEnvSpec query.name, flagPrefix
+    name = query.path[0]
+
+    spec = module.exports.parseEnvSpec name, flagPrefix
     # we cant do anything
     unless spec?
       return
@@ -142,7 +144,7 @@ module.exports.newEnvResolver = (flagPrefix) ->
     factory.$match = spec
 
     return {
-      name: query.name
+      path: query.path
       factory: factory
       container: query.container
     }
@@ -159,7 +161,7 @@ module.exports.newTableResolver = ->
     if result?
       return result
 
-    words = module.exports.splitCamelcase query.name
+    words = module.exports.splitCamelcase query.path[0]
 
     unless words[words.length - 1] is 'table'
       return
@@ -177,7 +179,7 @@ module.exports.newTableResolver = ->
 
     return {
       factory: factory
-      name: query.name
+      path: query.path
       container: query.container
     }
 
@@ -193,13 +195,16 @@ module.exports.newAliasResolver = (aliasMap = {}) ->
     if result?
       return result
 
-    alias = aliasMap[query.name]
+    alias = aliasMap[query.path[0]]
 
     unless alias?
       return
 
+    newPath = query.path.slice()
+    newPath[0] = alias
+
     inner
-      name: alias
+      path: newPath
       container: query.container
 
   resolver.$name = 'aliasResolver'
@@ -233,7 +238,7 @@ module.exports.newDataFirstResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher query.name
+    match = options.matcher query.path[0]
     unless match?
       return
 
@@ -254,7 +259,7 @@ module.exports.newDataFirstResolver = (options = {}) ->
 
     return {
       factory: factory
-      name: query.name
+      path: query.path
       container: query.container
     }
 
@@ -290,7 +295,7 @@ module.exports.newDataSelectResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher query.name
+    match = options.matcher query.path[0]
     # we cant do anything
     unless match?
       return
@@ -313,7 +318,7 @@ module.exports.newDataSelectResolver = (options = {}) ->
     return {
       factory: factory
       container: query.container
-      name: query.name
+      path: query.path
     }
 
   resolver.$name = 'dataSelectResolver'
@@ -344,7 +349,7 @@ module.exports.newDataInsertResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher query.name
+    match = options.matcher query.path[0]
     unless match?
       return
 
@@ -363,7 +368,7 @@ module.exports.newDataInsertResolver = (options = {}) ->
 
     return {
       factory: factory
-      name: query.name
+      path: query.path
       container: query.container
     }
 
@@ -404,7 +409,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher query.name
+    match = options.matcher query.path[0]
     unless match?
       return
 
@@ -428,7 +433,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
 
     return {
       factory: factory
-      name: name
+      path: path
       container: container
     }
 
@@ -467,7 +472,7 @@ module.exports.newDataDeleteResolver = (options = {}) ->
     if result?
       return result
 
-    match = options.matcher query.name
+    match = options.matcher query.path[0]
     unless match?
       return
 
@@ -489,7 +494,7 @@ module.exports.newDataDeleteResolver = (options = {}) ->
     return {
       factory: factory
       container: query.container
-      name: query.name
+      path: query.path
     }
 
   resolver.$name = 'dataDeleteResolver'
@@ -507,7 +512,7 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
 
     # otherwise try out namespace mappings
 
-    parts = query.name.split '_'
+    parts = query.path[0].split '_'
     if parts.length is 1
       # common case (no namespace part)
       aliasPart = ''
@@ -517,11 +522,6 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
       namePart = parts[parts.length - 1]
 
     possibleNamespaces = aliasToNamespaces[aliasPart]
-
-    # console.log 'aliasPart', aliasPart
-    # console.log 'namePart', namePart
-    # console.log 'aliasToNamespaces', aliasToNamespaces
-    # console.log 'possibleNamespaces', possibleNamespaces
 
     unless possibleNamespaces?
       # common case (no mapping for namespace part)
@@ -539,9 +539,11 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
             namePart
           else
             [namespace, namePart].join('_')
+        newPath = query.path.slice()
+        newPath[0] = mappedName
         resolved = inner
           container: query.container
-          name: mappedName
+          path: newPath
         if resolved?
           results.push
             namespace: namespace
