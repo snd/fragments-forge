@@ -434,7 +434,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
     return {
       factory: factory
       path: query.path
-      container: container
+      container: query.container
     }
 
   resolver.$name = 'dataUpdateResolver'
