@@ -906,26 +906,47 @@ module.exports =
 
   'newNamespaceResolver':
 
+    'if inner can resolve return that': (test) ->
+      expected = {}
+
+      acrobat_opinion = {}
+      opinion = {}
+
+      container =
+        factories:
+          acrobat_opinion: -> acrobat_opinion
+          opinion: -> opinion
+        resolvers: [
+          forge.newNamespaceResolver(
+            '': ['acrobat']
+          )
+        ]
+
+      hinoki.get(container, 'opinion').then (result) ->
+        test.equal result, container.values.opinion
+        test.ok not container.values.acrobat_opinion?
+        test.equal result, opinion
+        test.notEqual result, acrobat_opinion
+        test.done()
+
     'global to namespace with match with result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
+      expected = {}
 
-      resolver = forge.newNamespaceResolver
-        '': ['acrobat']
-      query =
-        path: ['opinion']
-        container: {}
-      test.equals x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+      value = {}
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['opinion']}
-        {container: query.container, path: ['acrobat_opinion']}
-      ]
+      container =
+        factories:
+          acrobat_opinion: -> value
+        resolvers: [
+          forge.newNamespaceResolver(
+            '': ['acrobat']
+          )
+        ]
 
-      test.done()
+      hinoki.get(container, 'opinion').then (result) ->
+        test.equals result, container.values.acrobat_opinion
+        test.equals result, value
+        test.done()
 
     'namespace to global with match with result': (test) ->
       x = {}
