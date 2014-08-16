@@ -676,39 +676,65 @@ module.exports =
         test.done()
 
 ###################################################################################
-# data accessor
-
-  'parseDataFirst': (test) ->
-    test.deepEqual forge.parseDataFirst('firstUser'),
-      name: 'user'
-      where: []
-    test.deepEqual forge.parseDataFirst('firstUserCreatedAt'),
-      name: 'userCreatedAt'
-      where: []
-    test.deepEqual forge.parseDataFirst('firstUserWhereCreatedAt'),
-      name: 'user'
-      where: ['created_at']
-    test.deepEqual forge.parseDataFirst('firstOrderReportWhereIdWhereCreatedAt'),
-      name: 'orderReport'
-      where: ['id', 'created_at']
-
-    test.done()
+# first
 
   'parseDataSelect': (test) ->
-    test.deepEqual forge.parseDataSelect('selectUser'),
+    test.deepEqual forge.parseDataSelect('firstUser'),
+      type: 'first'
       name: 'user'
+      order: []
       where: []
     test.deepEqual forge.parseDataSelect('selectUserCreatedAt'),
+      type: 'select'
       name: 'userCreatedAt'
+      order: []
       where: []
-    test.deepEqual forge.parseDataSelect('selectUserWhereCreatedAt'),
+    test.deepEqual forge.parseDataSelect('firstUserWhereCreatedAt'),
+      type: 'first'
       name: 'user'
+      order: []
       where: ['created_at']
-    test.deepEqual forge.parseDataSelect('selectOrderReportWhereIdWhereCreatedAt'),
+    test.deepEqual forge.parseDataSelect('selectOrderReportWhereOrderIdWhereCreatedAt'),
+      type: 'select'
       name: 'orderReport'
-      where: ['id', 'created_at']
+      order: []
+      where: ['order_id', 'created_at']
+    test.deepEqual forge.parseDataSelect('firstOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtDesc'),
+      type: 'first'
+      name: 'orderReport'
+      order: [
+        {
+          column: 'created_at'
+          direction: 'desc'
+        }
+      ]
+      where: ['order_id', 'created_at']
+    test.deepEqual forge.parseDataSelect('selectOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtOrderByIdDescOrderByReportNumberAsc'),
+      type: 'select'
+      name: 'orderReport'
+      order: [
+        {
+          column: 'created_at'
+          direction: 'asc'
+        }
+        {
+          column: 'id'
+          direction: 'desc'
+        }
+        {
+          column: 'report_number'
+          direction: 'asc'
+        }
+      ]
+      where: ['order_id', 'created_at']
 
     test.done()
+
+###################################################################################
+# select
+
+###################################################################################
+# insert
 
   'parseDataInsert': (test) ->
     test.deepEqual forge.parseDataInsert('insertOrderReport'),
@@ -718,6 +744,9 @@ module.exports =
 
     test.done()
 
+###################################################################################
+# update
+
   'parseDataUpdate': (test) ->
     test.ok not forge.parseDataUpdate('updateOrderReport')?
     test.deepEqual forge.parseDataUpdate('updateOrderReportWhereRegistrationNumber'),
@@ -725,6 +754,9 @@ module.exports =
       where: ['registration_number']
 
     test.done()
+
+###################################################################################
+# delete
 
   'parseDataDelete': (test) ->
     test.ok not forge.parseDataDelete('deleteOrderReport')?

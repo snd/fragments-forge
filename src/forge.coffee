@@ -237,25 +237,55 @@ module.exports.newAliasResolver = (aliasMap = {}) ->
   return resolver
 
 ###################################################################################
-# data first
+# parse data select
 
-module.exports.parseDataFirst = (name) ->
+module.exports.parseDataSelect = (name) ->
   words = module.exports.splitCamelcase name
 
-  unless 'first' is words[0]
+  type = words[0]
+
+  unless type in ['first', 'select']
     return
 
-  rest = words.slice(1)
+  tableAndWhereAndOrder = words.slice(1)
 
-  partition = module.exports.splitArray rest, 'where'
+  tableAndWhere = tableAndWhereAndOrder
+  [tableAndWhere, order...] = module.exports.splitArray tableAndWhereAndOrder,
+    ['order', 'by']
+
+  [table, where...] = module.exports.splitArray tableAndWhere, 'where'
+
+  whereProcessed = where
+    .filter (x) -> x.length isnt 0
+    .map module.exports.joinUnderscore
+
+  orderProcessed = order
+    .filter (x) -> x.length isnt 0
+    .map (x) ->
+      last = x[x.length - 1]
+      if last in ['asc', 'desc']
+        column = x.slice(0, -1)
+        direction = last
+      else
+        column = x
+        direction = 'asc'
+      {
+        column: module.exports.joinUnderscore column
+        direction: direction
+      }
 
   {
-    name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
+    type: type
+    name: module.exports.joinCamelcase table
+    order: orderProcessed
+    where: whereProcessed
   }
 
+###################################################################################
+# data first
+
 module.exports.newDataFirstResolver = (options = {}) ->
-  options.matcher ?= module.exports.parseDataFirst
+  options.matcher ?= module.exports.parseDataSelect
   options.nameToTable ?= (name) ->
     name + 'Table'
 
@@ -265,7 +295,7 @@ module.exports.newDataFirstResolver = (options = {}) ->
       return result
 
     match = options.matcher query.path[0]
-    unless match?
+    unless match? and match.type is 'first'
       return
 
     factory = (table) ->
@@ -295,21 +325,6 @@ module.exports.newDataFirstResolver = (options = {}) ->
 ###################################################################################
 # data select
 
-module.exports.parseDataSelect = (name) ->
-  words = module.exports.splitCamelcase name
-
-  unless 'select' is words[0]
-    return
-
-  rest = words.slice(1)
-
-  partition = module.exports.splitArray rest, 'where'
-
-  {
-    name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
-  }
-
 module.exports.newDataSelectResolver = (options = {}) ->
   options.matcher ?= module.exports.parseDataSelect
   options.nameToTable ?= (name) ->
@@ -323,7 +338,8 @@ module.exports.newDataSelectResolver = (options = {}) ->
 
     match = options.matcher query.path[0]
     # we cant do anything
-    unless match?
+    unless match? and match.type is 'select'
+      return
       return
 
     factory = (table) ->
