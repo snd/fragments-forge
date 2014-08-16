@@ -876,6 +876,31 @@ module.exports =
 
     test.done()
 
+  'deleteUserWhereIdWhereCreatedAt': (test) ->
+      calls =
+        where: []
+      table = {}
+      result = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.delete = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataDeleteResolver()]
+
+      hinoki.get(container, 'deleteUserWhereIdWhereCreatedAt')
+        .then (accessor) ->
+          test.equals result, accessor 1, 2
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.done()
+
 ###################################################################################
 # namespace
 
