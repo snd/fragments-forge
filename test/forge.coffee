@@ -838,6 +838,33 @@ module.exports =
 
     test.done()
 
+  'updateUserWhereIdWhereCreatedAt': (test) ->
+      calls =
+        where: []
+      table = {}
+      result = {}
+      data = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.update = (arg) ->
+        test.equals arg, data
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataUpdateResolver()]
+
+      hinoki.get(container, 'updateUserWhereIdWhereCreatedAt')
+        .then (accessor) ->
+          test.equals result, accessor data, 1, 2
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.done()
+
 ###################################################################################
 # delete
 
