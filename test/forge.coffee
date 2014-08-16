@@ -212,6 +212,7 @@ module.exports =
       'strict':
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -224,6 +225,7 @@ module.exports =
               test.done()
 
         'must be present': (test) ->
+          test.expect 1
           container =
             values:
               env: {}
@@ -235,6 +237,7 @@ module.exports =
               test.done()
 
         'must not be blank': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -249,6 +252,7 @@ module.exports =
       'maybe':
 
         'null': (test) ->
+          test.expect 1
           container =
             values:
               env: {}
@@ -264,6 +268,7 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
         'null (blank)': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -277,6 +282,7 @@ module.exports =
 
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -293,6 +299,7 @@ module.exports =
       'strict':
 
         'true': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -305,6 +312,7 @@ module.exports =
               test.done()
 
         'false': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -317,6 +325,7 @@ module.exports =
               test.done()
 
         'must be true or false': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -331,6 +340,7 @@ module.exports =
       'maybe':
 
         'null': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -343,6 +353,7 @@ module.exports =
               test.done()
 
         'true': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -355,6 +366,7 @@ module.exports =
               test.done()
 
         'false': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -367,6 +379,7 @@ module.exports =
               test.done()
 
         'must be true or false': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -383,6 +396,7 @@ module.exports =
       'strict':
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -395,6 +409,7 @@ module.exports =
               test.done()
 
         'must be an integer': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -409,6 +424,7 @@ module.exports =
       'maybe':
 
         'null': (test) ->
+          test.expect 1
           container =
             values:
               env: {}
@@ -420,6 +436,7 @@ module.exports =
               test.done()
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -432,6 +449,7 @@ module.exports =
               test.done()
 
         'must be an integer': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -448,6 +466,7 @@ module.exports =
       'strict':
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -460,6 +479,7 @@ module.exports =
               test.done()
 
         'must be a float': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -474,6 +494,7 @@ module.exports =
       'maybe':
 
         'null': (test) ->
+          test.expect 1
           container =
             values:
               env: {}
@@ -485,6 +506,7 @@ module.exports =
               test.done()
 
         'success': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -497,6 +519,7 @@ module.exports =
               test.done()
 
         'must be a float': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -513,6 +536,7 @@ module.exports =
       'strict':
 
         'success': (test) ->
+          test.expect 1
           data =
             alpha: 1
             bravo: true
@@ -530,6 +554,7 @@ module.exports =
               test.done()
 
         'must be json': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -544,6 +569,7 @@ module.exports =
       'maybe':
 
         'null': (test) ->
+          test.expect 1
           container =
             values:
               env: {}
@@ -555,6 +581,7 @@ module.exports =
               test.done()
 
         'success': (test) ->
+          test.expect 1
           data =
             alpha: 1
             bravo: true
@@ -572,6 +599,7 @@ module.exports =
               test.done()
 
         'must be json': (test) ->
+          test.expect 1
           container =
             values:
               env:
@@ -589,6 +617,7 @@ module.exports =
   'newTableResolver':
 
     'no match': (test) ->
+      test.expect 1
       container =
         resolvers: [forge.newTableResolver()]
 
@@ -598,6 +627,7 @@ module.exports =
           test.done()
 
     'if inner returns truthy then return that': (test) ->
+      test.expect 1
       container =
         values:
           userTable: {}
@@ -609,6 +639,7 @@ module.exports =
           test.done()
 
     'userTable': (test) ->
+      test.expect 1
       container =
         values:
           table:
@@ -621,6 +652,7 @@ module.exports =
           test.done()
 
     'projectMessageTable': (test) ->
+      test.expect 1
       container =
         values:
           table:
@@ -638,6 +670,7 @@ module.exports =
   'newAliasResolver':
 
     'passthrough': (test) ->
+      test.expect 1
       container =
         values:
           thing: {}
@@ -648,6 +681,7 @@ module.exports =
         test.done()
 
     'no alias': (test) ->
+      test.expect 0
       container =
         resolvers: [forge.newAliasResolver()]
 
@@ -656,6 +690,7 @@ module.exports =
         test.done()
 
     'value': (test) ->
+      test.expect 1
       container =
         values:
           thing: {}
@@ -666,6 +701,7 @@ module.exports =
         test.done()
 
     'factory': (test) ->
+      test.expect 2
       value = {}
       container =
         factories:
@@ -736,6 +772,7 @@ module.exports =
 # first
 
   'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+      test.expect 3
       calls =
         where: []
         order: []
@@ -769,6 +806,7 @@ module.exports =
 # select
 
   'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+      test.expect 3
       calls =
         where: []
         order: []
@@ -810,6 +848,7 @@ module.exports =
     test.done()
 
   'insertUser': (test) ->
+      test.expect 2
       result = {}
       data = {}
       table =
@@ -839,6 +878,7 @@ module.exports =
     test.done()
 
   'updateUserWhereIdWhereCreatedAt': (test) ->
+      test.expect 3
       calls =
         where: []
       table = {}
@@ -877,6 +917,7 @@ module.exports =
     test.done()
 
   'deleteUserWhereIdWhereCreatedAt': (test) ->
+      test.expect 2
       calls =
         where: []
       table = {}
@@ -907,8 +948,7 @@ module.exports =
   'newNamespaceResolver':
 
     'if inner can resolve return that': (test) ->
-      expected = {}
-
+      test.expect 4
       acrobat_opinion = {}
       opinion = {}
 
@@ -916,11 +956,7 @@ module.exports =
         factories:
           acrobat_opinion: -> acrobat_opinion
           opinion: -> opinion
-        resolvers: [
-          forge.newNamespaceResolver(
-            '': ['acrobat']
-          )
-        ]
+        resolvers: [forge.newNamespaceResolver('': ['acrobat'])]
 
       hinoki.get(container, 'opinion').then (result) ->
         test.equal result, container.values.opinion
@@ -930,18 +966,13 @@ module.exports =
         test.done()
 
     'global to namespace with match with result': (test) ->
-      expected = {}
-
+      test.expect 2
       value = {}
 
       container =
         factories:
           acrobat_opinion: -> value
-        resolvers: [
-          forge.newNamespaceResolver(
-            '': ['acrobat']
-          )
-        ]
+        resolvers: [forge.newNamespaceResolver('': ['acrobat'])]
 
       hinoki.get(container, 'opinion').then (result) ->
         test.equal result, container.values.acrobat_opinion
@@ -949,249 +980,165 @@ module.exports =
         test.done()
 
     'namespace to global with match with result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
+      test.expect 2
+      value = {}
 
-      resolver = forge.newNamespaceResolver
-        'acrobat': ['']
-      query =
-        path: ['acrobat_opinion']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+      container =
+        factories:
+          opinion: -> value
+        resolvers: [forge.newNamespaceResolver('acrobat': [''])]
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['acrobat_opinion']}
-        {container: query.container, path: ['opinion']}
-      ]
-
-      test.done()
+      hinoki.get(container, 'acrobat_opinion').then (result) ->
+        test.equal result, container.values.opinion
+        test.equal result, value
+        test.done()
 
     'namespace to namespace without match': (test) ->
-      calls = []
-      returns = [undefined, undefined].reverse()
+      test.expect 0
+      value = {}
 
-      resolver = forge.newNamespaceResolver
-        'tourist': ['artist']
-      query =
-        path: ['opinion']
-        container: {}
-      test.ok 'undefined' is typeof resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+      container =
+        resolvers: [forge.newNamespaceResolver('tourist': ['artist'])]
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['opinion']}
-      ]
+      hinoki.get(container, 'opinion')
+        .catch hinoki.UnresolvableFactoryError, (error) ->
+          test.done()
 
-      test.done()
+    'namespace to namespace with match':
 
-    'namespace to namespace with match with result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
+      'with result': (test) ->
+        test.expect 2
+        value = {}
 
-      resolver = forge.newNamespaceResolver
-        'tourist': ['acrobat']
-      query =
-        path: ['tourist_opinion']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+        container =
+          factories:
+            acrobat_opinion: -> value
+          resolvers: [forge.newNamespaceResolver('tourist': ['acrobat'])]
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['tourist_opinion']}
-        {container: query.container, path: ['acrobat_opinion']}
-      ]
+        hinoki.get(container, 'tourist_opinion').then (result) ->
+          test.equal result, container.values.acrobat_opinion
+          test.equal result, value
+          test.done()
 
-      test.done()
+      'with null result': (test) ->
+        test.expect 2
+        container =
+          factories:
+            acrobat_opinion: -> null
+          resolvers: [forge.newNamespaceResolver('tourist': ['acrobat'])]
 
-    'namespace to namespace with match with null result': (test) ->
-      calls = []
-      returns = [undefined, null].reverse()
+        hinoki.get(container, 'tourist_opinion').then (result) ->
+          test.equal null, container.values.acrobat_opinion
+          test.equal null, result
+          test.done()
 
-      resolver = forge.newNamespaceResolver
-        'tourist': ['acrobat']
-      query =
-        path: ['tourist_opinion']
-        container: {}
-      test.equal null, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+      'without result': (test) ->
+        test.expect 0
+        container =
+          resolvers: [forge.newNamespaceResolver('tourist': ['acrobat'])]
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['tourist_opinion']}
-        {container: query.container, path: ['acrobat_opinion']}
-      ]
-
-      test.done()
-
-    'namespace to namespace with match without result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, undefined].reverse()
-
-      resolver = forge.newNamespaceResolver
-        'tourist': ['acrobat']
-      query =
-        path: ['tourist_opinion']
-        container: {}
-      test.ok 'undefined' is typeof resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-
-      test.deepEqual calls, [
-        {container: query.container, path: ['tourist_opinion']}
-        {container: query.container, path: ['acrobat_opinion']}
-      ]
-
-      test.done()
+        hinoki.get(container, 'tourist_opinion')
+          .catch hinoki.UnresolvableFactoryError, (error) ->
+            test.done()
 
     'namespace to multi-namespace with match with result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
+      test.expect 2
+      value = {}
+      container =
+        factories:
+          acrobat_echo_opinion: -> value
+        resolvers: [forge.newNamespaceResolver('tourist': ['acrobat_echo'])]
 
-      resolver = forge.newNamespaceResolver
-        'tourist': ['acrobat_echo']
-      query =
-        path: ['tourist_opinion']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-
-      test.deepEqual calls, [
-        {container: query.container, path: ['tourist_opinion']}
-        {container: query.container, path: ['acrobat_echo_opinion']}
-      ]
-
-      test.done()
+      hinoki.get(container, 'tourist_opinion').then (result) ->
+        test.equal value, container.values.acrobat_echo_opinion
+        test.equal value, result
+        test.done()
 
     'multi-namespace to namespace with match with result': (test) ->
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
+      test.expect 2
+      value = {}
+      container =
+        factories:
+          acrobat_opinion: -> value
+        resolvers: [forge.newNamespaceResolver('tourist_bravo': ['acrobat'])]
 
-      resolver = forge.newNamespaceResolver
-        'tourist_bravo': ['acrobat']
-      query =
-        path: ['tourist_bravo_opinion']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
+      hinoki.get(container, 'tourist_bravo_opinion').then (result) ->
+        test.equal value, container.values.acrobat_opinion
+        test.equal value, result
+        test.done()
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['tourist_bravo_opinion']}
-        {container: query.container, path: ['acrobat_opinion']}
-      ]
-
-      test.done()
 
     'ambiguity error': (test) ->
-      x = {}
-      y = {}
-      z = {}
-      calls = []
-      returns = [undefined, x, y, z].reverse()
-
+      test.expect 1
       resolver = forge.newNamespaceResolver
         'delta': ['alpha_echo', 'tourist', 'bravo']
-      query =
-        path: ['delta_charlie']
-        container: {}
-      error = [
+
+      container =
+        values:
+          alpha_echo_charlie: {}
+          tourist_charlie: {}
+          bravo_charlie: {}
+        resolvers: [resolver]
+
+      message = [
         "ambiguity in namespace resolver."
         "\"delta_charlie\" maps to multiple resolvable names:"
-        "alpha_echo_charlie (alpha_echo -> delta)"
-        "tourist_charlie (tourist -> delta)"
-        "bravo_charlie (bravo -> delta)"
+        "alpha_echo_charlie (delta -> alpha_echo)"
+        "tourist_charlie (delta -> tourist)"
+        "bravo_charlie (delta -> bravo)"
       ].join '\n'
-      test.throws(
-        ->
-          resolver query, (arg) ->
-            calls.push arg
-            return returns.pop()
-        Error
-        error
-      )
 
-      test.deepEqual calls, [
-        {container: query.container, path: ['delta_charlie']}
-        {container: query.container, path: ['alpha_echo_charlie']}
-        {container: query.container, path: ['tourist_charlie']}
-        {container: query.container, path: ['bravo_charlie']}
-      ]
+      hinoki.get(container, 'delta_charlie')
+        .catch (error) ->
+          test.equal error.message, message
+          test.done()
 
-      test.done()
+    'single underscore works': (test) ->
+      test.expect 1
+      container =
+        values:
+          _: {}
+        resolvers: [forge.newNamespaceResolver('tourist_bravo': ['acrobat'])]
 
-    'complex run': (test) ->
-      resolver = forge.newNamespaceResolver
-        '': ['blaze', 'dragon']
-        'u': ['util', 'delta']
-        'urlApi': ['url_api']
-        'blaze_port': ['']
-      container = {}
+      hinoki.get(container, '_').then (result) ->
+        test.equal result, container.values._
+        test.done()
 
-      x = {}
-      calls = []
-      returns = [undefined, undefined, x].reverse()
-      query =
-        path: ['userAgent']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-      test.deepEqual calls, [
-        {container: query.container, path: ['userAgent']}
-        {container: query.container, path: ['blaze_userAgent']}
-        {container: query.container, path: ['dragon_userAgent']}
-      ]
+    'multiple namespace mappings at once':
 
-      x = {}
-      calls = []
-      returns = [undefined, x].reverse()
-      query =
-        path: ['urlApi_passwordForgot']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-      test.deepEqual calls, [
-        {container: query.container, path: ['urlApi_passwordForgot']}
-        {container: query.container, path: ['url_api_passwordForgot']}
-      ]
+      'userAgent': (test) ->
+        test.expect 2
+        resolver = forge.newNamespaceResolver
+          '': ['blaze', 'dragon']
+          'u': ['util', 'delta']
+          'urlApi': ['url_api']
+          'blaze_port': ['']
 
-      x = {}
-      calls = []
-      returns = [undefined, undefined, undefined].reverse()
-      query =
-        path: ['urlApi']
-        container: {}
-      test.ok 'undefined' is typeof resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-      test.deepEqual calls, [
-        {container: query.container, path: ['urlApi']}
-        {container: query.container, path: ['blaze_urlApi']}
-        {container: query.container, path: ['dragon_urlApi']}
-      ]
+        value = {}
+        container =
+          factories:
+            dragon_userAgent: -> value
+          resolvers: [resolver]
 
-      x = {}
-      calls = []
-      returns = [x].reverse()
-      query =
-        path: ['_']
-        container: {}
-      test.equal x, resolver query, (arg) ->
-        calls.push arg
-        return returns.pop()
-      test.deepEqual calls, [
-        {container: query.container, path: ['_']}
-      ]
+        hinoki.get(container, 'userAgent').then (result) ->
+          test.equal result, value
+          test.equal container.values.dragon_userAgent, value
+          test.done()
 
-      test.done()
+      'urlApi_passwordForgot': (test) ->
+        test.expect 1
+        resolver = forge.newNamespaceResolver
+          '': ['blaze', 'dragon']
+          'u': ['util', 'delta']
+          'urlApi': ['url_api']
+          'blaze_port': ['']
+
+        value = {}
+        container =
+          values:
+            url_api_passwordForgot: value
+          resolvers: [resolver]
+
+        hinoki.get(container, 'urlApi_passwordForgot').then (result) ->
+          test.equal result, value
+          test.done()
