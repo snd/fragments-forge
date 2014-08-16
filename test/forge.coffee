@@ -468,21 +468,94 @@ module.exports =
               test.equals error.exception.message, 'env var PI must be a float'
               test.done()
 
+    'envJsonConfig':
+
+      'strict':
+
+        'success': (test) ->
+          data =
+            alpha: 1
+            bravo: true
+            charlie: "delta"
+
+          container =
+            values:
+              env:
+                CONFIG: JSON.stringify(data)
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envJsonConfig')
+            .then (result) ->
+              test.deepEqual data, result
+              test.done()
+
+        'must be json': (test) ->
+          container =
+            values:
+              env:
+                CONFIG: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envJsonConfig')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+              test.done()
+
+      'maybe':
+
+        'null': (test) ->
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeJsonConfig')
+            .then (result) ->
+              test.equals null, result
+              test.done()
+
+        'success': (test) ->
+          data =
+            alpha: 1
+            bravo: true
+            charlie: "delta"
+
+          container =
+            values:
+              env:
+                CONFIG: JSON.stringify(data)
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeJsonConfig')
+            .then (result) ->
+              test.deepEqual data, result
+              test.done()
+
+        'must be json': (test) ->
+          container =
+            values:
+              env:
+                CONFIG: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envJsonConfig')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+              test.done()
+
 ###################################################################################
 # table
 
   'newTableResolver':
 
     'no match': (test) ->
-      resolver = forge.newTableResolver()
-      query =
-        path: ['Table']
-        container: {}
-      test.equals null, resolver query, (arg) ->
-        test.equals arg, query
-        return null
+      container =
+        resolvers: [forge.newTableResolver()]
 
-      test.done()
+      hinoki.get(container, 'Table')
+        .catch hinoki.UnresolvableFactoryError, (error) ->
+          test.deepEqual error.path, ['Table']
+          test.done()
 
     'if inner returns truthy then return that': (test) ->
       resolver = forge.newTableResolver()
