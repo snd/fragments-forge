@@ -1,3 +1,5 @@
+hinoki = require 'hinoki'
+
 forge = require '../src/forge'
 
 module.exports =
@@ -96,7 +98,7 @@ module.exports =
       test.done()
 
 ###################################################################################
-# env
+# env parse
 
   'parseEnvSpec':
 
@@ -148,240 +150,328 @@ module.exports =
 
       test.done()
 
-  'newEnvFactoryResolver':
+###################################################################################
+# env resolver
 
-    'passthrough': (test) ->
-      test.expect 2
+  'newEnvResolver':
 
-      resolver = forge.newEnvResolver()
-      factory = {}
-      query =
-        path: ['envIntPort']
-        container: {}
-      test.equals factory, resolver query, (arg) ->
-        test.equals query, arg
-        return factory
+    'inner result is passed on unchanged': (test) ->
+      expected = {}
 
-      test.done()
+      container =
+        factories:
+          envIntPort: -> expected
+        resolvers: [forge.newEnvResolver()]
 
-    'envStringBaseUrl': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envStringBaseUrl']
-        container: {}
-      result = resolver query, (arg) ->
-        test.equals query, arg
-        null
+      hinoki.get(container, 'envIntPort').then (actual) ->
+        test.equals actual, expected
+        test.done()
 
-      test.equals result.path, query.path
-      test.equals result.container, query.container
+    'envStringBaseUrl':
 
-      test.equals '/test', result.factory {
-        BASE_URL: '/test'
-        PORT: '9000'
-      }
+      'strict':
 
-      test.throws(
-        ->
-          factory {
-            BASE_URL: ''
-            PORT: '9000'
-          }
-        Error
-        'env var BASE_URL must not be blank'
-      )
+        'success': (test) ->
+          container =
+            values:
+              env:
+                BASE_URL: '/test'
+            resolvers: [forge.newEnvResolver()]
 
-      test.throws(
-        ->
-          result.factory {
-            PORT: '9000'
-          }
-        Error
-        'env var BASE_URL must not be blank'
-      )
+          hinoki.get(container, 'envStringBaseUrl')
+            .then (result) ->
+              test.equals result, '/test'
+              test.done()
 
-      test.done()
+        'must be present': (test) ->
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
 
-    'envBoolIsActive': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envBoolIsActive']
-        container: {}
-      result = resolver query, ->
+          hinoki.get(container, 'envStringBaseUrl')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var BASE_URL must not be blank'
+              test.done()
 
-      test.equals true, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: 'true'
-        PORT: '9000'
-      }
+        'must not be blank': (test) ->
+          container =
+            values:
+              env:
+                BASE_URL: ''
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals false, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: 'false'
-        PORT: '9000'
-      }
+          hinoki.get(container, 'envStringBaseUrl')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var BASE_URL must not be blank'
+              test.done()
 
-      test.throws(
-        ->
-          result.factory {
-            PORT: 'dflkdjfl'
-            IS_ACTIVE: 'foo'
-          }
-        Error
-        "env var IS_ACTIVE must be 'true' or 'false'"
-      )
+      'maybe':
 
-      test.done()
+        'null': (test) ->
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
 
-    'envIntPort': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envIntPort']
-        container: {}
-      result = resolver query, ->
+          hinoki.get(container, 'envMaybeStringBaseUrl')
+            .then (result) ->
+              test.equals result, null
+              test.done()
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals 9000, result.factory {
-        BASE_URL: '/test'
-        PORT: '9000'
-      }
+        'null (blank)': (test) ->
+          container =
+            values:
+              env:
+                BASE_URL: ''
+            resolvers: [forge.newEnvResolver()]
 
-      test.throws(
-        ->
-          result.factory {
-            PORT: 'dflkdjfl'
-          }
-        Error
-        'env var PORT must be an integer'
-      )
+          hinoki.get(container, 'envMaybeStringBaseUrl')
+            .then (result) ->
+              test.equals result, null
+              test.done()
 
-      test.done()
 
-    'envFloatPi': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envFloatPi']
-        container: {}
-      result = resolver query, ->
+        'success': (test) ->
+          container =
+            values:
+              env:
+                BASE_URL: '/test'
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals 3.141, result.factory {
-        BASE_URL: '/test'
-        PI: '3.141'
-      }
+          hinoki.get(container, 'envMaybeStringBaseUrl')
+            .then (result) ->
+              test.equals result, '/test'
+              test.done()
 
-      test.throws(
-        ->
-          result.factory {
-            PI: 'dflkdjfl'
-          }
-        Error
-        'env var PI must be a float'
-      )
+    'envBoolIsActive':
 
-      test.done()
+      'strict':
 
-    'envMaybeStringBaseUrl': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envMaybeStringBaseUrl']
-        container: {}
-      result = resolver query, ->
+        'true': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'true'
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals '/test', result.factory {
-        BASE_URL: '/test'
-        PORT: '9000'
-      }
+          hinoki.get(container, 'envBoolIsActive')
+            .then (result) ->
+              test.equals true, result
+              test.done()
 
-      test.equals null, result.factory {
-        BASE_URL: ''
-        PORT: '9000'
-      }
+        'false': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'false'
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals null, result.factory {
-        PORT: '9000'
-      }
+          hinoki.get(container, 'envBoolIsActive')
+            .then (result) ->
+              test.equals false, result
+              test.done()
 
-      test.done()
+        'must be true or false': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'foo'
+            resolvers: [forge.newEnvResolver()]
 
-    'envMaybeBoolIsActive': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envMaybeBoolIsActive']
-        container: {}
-      result = resolver query, ->
+          hinoki.get(container, 'envBoolIsActive')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+              test.done()
 
-      test.equals true, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: 'true'
-        PORT: '9000'
-      }
+      'maybe':
 
-      test.equals false, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: 'false'
-        PORT: '9000'
-      }
+        'null': (test) ->
+          container =
+            values:
+              env:
+                {}
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals null, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: ''
-        PORT: '9000'
-      }
+          hinoki.get(container, 'envMaybeBoolIsActive')
+            .then (result) ->
+              test.equals result, null
+              test.done()
 
-      test.equals null, result.factory {
-        BASE_URL: '/test'
-        PORT: '9000'
-      }
+        'true': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'true'
+            resolvers: [forge.newEnvResolver()]
 
-      test.throws(
-        ->
-          result.factory {
-            PORT: 'dflkdjfl'
-            IS_ACTIVE: 'foo'
-          }
-        Error
-        "env var IS_ACTIVE must be 'true' or 'false'"
-      )
+          hinoki.get(container, 'envMaybeBoolIsActive')
+            .then (result) ->
+              test.equals true, result
+              test.done()
 
-      test.done()
+        'false': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'false'
+            resolvers: [forge.newEnvResolver()]
 
-    'envMaybeIntPort': (test) ->
-      resolver = forge.newEnvResolver()
-      query =
-        path: ['envMaybeIntPort']
-        container: {}
-      result = resolver query, ->
+          hinoki.get(container, 'envMaybeBoolIsActive')
+            .then (result) ->
+              test.equals false, result
+              test.done()
 
-      test.equals 9000, result.factory {
-        BASE_URL: '/test'
-        IS_ACTIVE: 'true'
-        PORT: '9000'
-      }
+        'must be true or false': (test) ->
+          container =
+            values:
+              env:
+                IS_ACTIVE: 'foo'
+            resolvers: [forge.newEnvResolver()]
 
-      test.equals null, result.factory {
-        BASE_URL: '/test'
-        PORT: ''
-      }
+          hinoki.get(container, 'envMaybeBoolIsActive')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+              test.done()
 
-      test.equals null, result.factory {
-        BASE_URL: '/test'
-      }
+    'envIntPort':
 
-      test.throws(
-        ->
-          result.factory {
-            PORT: 'dflkdjfl'
-            IS_ACTIVE: 'foo'
-          }
-        Error
-        "env var PORT must be an integer"
-      )
+      'strict':
 
-      test.done()
+        'success': (test) ->
+          container =
+            values:
+              env:
+                PORT: '9000'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envIntPort')
+            .then (result) ->
+              test.equals 9000, result
+              test.done()
+
+        'must be an integer': (test) ->
+          container =
+            values:
+              env:
+                PORT: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envIntPort')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var PORT must be an integer'
+              test.done()
+
+      'maybe':
+
+        'null': (test) ->
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeIntPort')
+            .then (result) ->
+              test.equals null, result
+              test.done()
+
+        'success': (test) ->
+          container =
+            values:
+              env:
+                PORT: '9000'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeIntPort')
+            .then (result) ->
+              test.equals 9000, result
+              test.done()
+
+        'must be an integer': (test) ->
+          container =
+            values:
+              env:
+                PORT: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeIntPort')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var PORT must be an integer'
+              test.done()
+
+    'envFloatPi':
+
+      'strict':
+
+        'success': (test) ->
+          container =
+            values:
+              env:
+                PI: '3.141'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envFloatPi')
+            .then (result) ->
+              test.equals 3.141, result
+              test.done()
+
+        'must be a float': (test) ->
+          container =
+            values:
+              env:
+                PI: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envFloatPi')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var PI must be a float'
+              test.done()
+
+      'maybe':
+
+        'null': (test) ->
+          container =
+            values:
+              env: {}
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeFloatPi')
+            .then (result) ->
+              test.equals null, result
+              test.done()
+
+        'success': (test) ->
+          container =
+            values:
+              env:
+                PI: '3.141'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeFloatPi')
+            .then (result) ->
+              test.equals 3.141, result
+              test.done()
+
+        'must be a float': (test) ->
+          container =
+            values:
+              env:
+                PI: 'foo'
+            resolvers: [forge.newEnvResolver()]
+
+          hinoki.get(container, 'envMaybeFloatPi')
+            .catch hinoki.ExceptionInFactoryError, (error) ->
+              test.equals error.exception.message, 'env var PI must be a float'
+              test.done()
 
 ###################################################################################
 # table
 
-  'newTableFactoryResolver':
+  'newTableResolver':
 
     'no match': (test) ->
       resolver = forge.newTableResolver()

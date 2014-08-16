@@ -24,14 +24,13 @@
     },
     "devDependencies": {
         "coffee-script": "1.7.1",
-        "nodeunit": "0.8.*"
+        "nodeunit": "0.9.0",
+        "hinoki": "0.3.0-beta.9"
     },
     "main": "src/forge",
     "scripts": {
-        "prepublish": "coffee --bare --compile --output src src/*.coffee",
+        "prepublish": "node_modules/coffee-script/bin/coffee --bare --compile --output src src/*.coffee",
         "postpublish": "rm src/*.js",
-        "pretest": "coffee --bare --compile --output src src/*.coffee && coffee --bare --compile --output test test/*.coffee",
-        "posttest": "rm src/*.js && rm test/*.js",
-        "test": "nodeunit test/*.js"
+        "test": "node_modules/nodeunit/bin/nodeunit test/*.coffee"
     }
 }
