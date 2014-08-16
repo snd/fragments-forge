@@ -558,56 +558,39 @@ module.exports =
           test.done()
 
     'if inner returns truthy then return that': (test) ->
-      resolver = forge.newTableResolver()
-      factoryResult = {}
-      query =
-        path: ['userTable']
-        container: {}
-      test.equals factoryResult, resolver query, (arg) ->
-        test.equals query, arg
-        return factoryResult
+      container =
+        values:
+          userTable: {}
+        resolvers: [forge.newTableResolver()]
 
-      test.done()
+      hinoki.get(container, 'userTable')
+        .then (result) ->
+          test.equals result, container.values.userTable
+          test.done()
 
     'userTable': (test) ->
-      resolver = forge.newTableResolver()
-      factoryResult = {}
-      query =
-        path: ['userTable']
-        container: {}
-      result = resolver query, (arg) ->
-        test.equals query, arg
-        return null
+      container =
+        values:
+          table:
+            user: {}
+        resolvers: [forge.newTableResolver()]
 
-      test.ok result?
-
-      table =
-        user: {}
-        projectMessage: {}
-
-      test.equals table.user, result.factory table
-
-      test.done()
+      hinoki.get(container, 'userTable')
+        .then (result) ->
+          test.equal result, container.values.table.user
+          test.done()
 
     'projectMessageTable': (test) ->
-      resolver = forge.newTableResolver()
-      factoryResult = {}
-      query =
-        path: ['projectMessageTable']
-        container: {}
-      result = resolver query, (arg) ->
-        test.equals query, arg
-        return null
+      container =
+        values:
+          table:
+            projectMessage: {}
+        resolvers: [forge.newTableResolver()]
 
-      test.ok result?
-
-      table =
-        user: {}
-        projectMessage: {}
-
-      test.equals table.projectMessage, result.factory table
-
-      test.done()
+      hinoki.get(container, 'projectMessageTable')
+        .then (result) ->
+          test.equal result, container.values.table.projectMessage
+          test.done()
 
 ###################################################################################
 # alias
