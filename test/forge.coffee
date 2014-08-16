@@ -707,7 +707,7 @@ module.exports =
       order: [
         {
           column: 'created_at'
-          direction: 'desc'
+          direction: 'DESC'
         }
       ]
       where: ['order_id', 'created_at']
@@ -717,15 +717,15 @@ module.exports =
       order: [
         {
           column: 'created_at'
-          direction: 'asc'
+          direction: 'ASC'
         }
         {
           column: 'id'
-          direction: 'desc'
+          direction: 'DESC'
         }
         {
           column: 'report_number'
-          direction: 'asc'
+          direction: 'ASC'
         }
       ]
       where: ['order_id', 'created_at']
@@ -755,13 +755,14 @@ module.exports =
           userTable: table
         resolvers: [forge.newDataFirstResolver()]
 
-      hinoki.get(container, 'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder')
+      hinoki.get(container, 'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrder')
         .then (accessor) ->
           test.equals result, accessor 1, 2
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
           ]
+          test.deepEqual calls.order, ['updated_at DESC, order ASC']
           test.done()
 
 ###################################################################################

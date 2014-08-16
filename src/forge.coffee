@@ -267,10 +267,10 @@ module.exports.parseDataSelect = (name) ->
       last = x[x.length - 1]
       if last in ['asc', 'desc']
         column = x.slice(0, -1)
-        direction = last
+        direction = last.toUpperCase()
       else
         column = x
-        direction = 'asc'
+        direction = 'ASC'
       {
         column: module.exports.joinUnderscore column
         direction: direction
@@ -307,6 +307,13 @@ module.exports.newDataFirstResolver = (options = {}) ->
           condition = {}
           condition[x] = args[index]
           q = q.where condition
+        if match.order.length isnt 0
+          order = match.order
+            .map (x) ->
+              x.column + ' ' + x.direction
+            .join (', ')
+          q = q.order order
+
         q.first()
 
     factory.$inject = [
