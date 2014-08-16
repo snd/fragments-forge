@@ -1144,42 +1144,66 @@ module.exports =
           test.done()
 
 ###################################################################################
-# null
+# surgical
 
-  'null':
+  'newSurgicalResolver':
 
     'passthrough': (test) ->
-      test.expect 1
-      predicate = -> test.ok false
+      test.expect 2
+      predicate = (path) ->
+        test.deepEqual path, ['x']
+        {value: {}}
       container =
         values:
           'x': {}
-        resolvers: [forge.newNullResolver(predicate)]
+        resolvers: [forge.newSurgicalResolver(predicate)]
 
       hinoki.get(container, 'x').then (result) ->
         test.equal result, container.values.x
         test.done()
 
-    'predicate match': (test) ->
+    'override': (test) ->
       test.expect 2
+      value = {}
       predicate = (path) ->
         test.deepEqual path, ['x']
-        path[0] is 'x'
+        {
+          value: value
+          override: true
+        }
       container =
-        resolvers: [forge.newNullResolver(predicate)]
+        values:
+          'x': {}
+        resolvers: [forge.newSurgicalResolver(predicate)]
 
       hinoki.get(container, 'x').then (result) ->
-        test.equal null, result
+        test.equal result, value
         test.done()
 
-    'no predicate match': (test) ->
-      test.expect 1
-      predicate = (path) ->
-        test.deepEqual path, ['y']
-        path[0] is 'x'
-      container =
-        resolvers: [forge.newNullResolver(predicate)]
+    'as null resolver':
 
-      hinoki.get(container, 'y')
-        .catch hinoki.UnresolvableFactoryError, ->
+      'predicate match': (test) ->
+        test.expect 2
+        predicate = (path) ->
+          test.deepEqual path, ['x']
+          if path[0] is 'x'
+            {value: null}
+        container =
+          resolvers: [forge.newSurgicalResolver(predicate)]
+
+        hinoki.get(container, 'x').then (result) ->
+          test.equal null, result
           test.done()
+
+      'no predicate match': (test) ->
+        test.expect 1
+        predicate = (path) ->
+          test.deepEqual path, ['y']
+          if path[0] is 'x'
+            return {value: null}
+        container =
+          resolvers: [forge.newSurgicalResolver(predicate)]
+
+        hinoki.get(container, 'y')
+          .catch hinoki.UnresolvableFactoryError, ->
+            test.done()

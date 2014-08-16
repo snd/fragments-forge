@@ -623,86 +623,32 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
   return resolver
 
 ###################################################################################
-# custom
+# surgical
 
-# transforms resolution based on who required it
-
-module.exports.newMockResolver = (aliasToNamespaces = {}) ->
-  resolver = (query, inner) ->
-    # if the name is directly resolvable return it
-    value = inner query
-    if value?
-      return value
-
-    # otherwise try out namespace mappings
-
-    parts = query.path[0].split '_'
-    if parts.length is 1
-      # common case (no namespace part)
-      aliasPart = ''
-      namePart = parts[0]
-    else
-      aliasPart = parts.slice(0, -1).join('_')
-      namePart = parts[parts.length - 1]
-
-    possibleNamespaces = aliasToNamespaces[aliasPart]
-
-    unless possibleNamespaces?
-      # common case (no mapping for namespace part)
-      return
-
-    unless Array.isArray possibleNamespaces
-      throw new Error 'values in aliasToNamespaces must be arrays'
-
-    results = []
-
-    for namespace in possibleNamespaces
-      do (namespace) ->
-        # call inner multiple times with different ids
-        mappedName = if namespace is ''
-            namePart
-          else
-            [namespace, namePart].join('_')
-        newPath = query.path.slice()
-        newPath[0] = mappedName
-        resolved = inner
-          container: query.container
-          path: newPath
-        if resolved?
-          results.push
-            namespace: namespace
-            mappedName: mappedName
-            resolved: resolved
-
-    return switch results.length
-      when 0 then undefined
-      when 1 then results[0].resolved
-      else
-        lines = [
-          "\"name\" maps to multiple resolvable names:"
-        ]
-        results.forEach (result) ->
-          lines.push "#{result.mappedName} (#{aliasPart} -> #{result.namespace})"
-        throw new Error lines.join('\n')
-
-  resolver.$name = 'namespaceResolver'
-  return resolver
-
-###################################################################################
-# null
-
+# intercepts, mocks
 # resolve all paths that match the predicate to null if they
-# can not be resolved by an inner resolver
-module.exports.newNullResolver = (predicate) ->
+# can not be resolved by an inner resolver.
+# can also be used to 
+# 
+# disables caching.
+module.exports.newSurgicalResolver = (callback) ->
   resolver = (query, inner) ->
-    # if the name is directly resolvable return it
-    value = inner query
-    if value?
-      return value
+    match = callback query.path
+    unless match?
+      return inner query
 
-    if predicate query.path
-      return {
-        value: null
-        path: query.path
-        container: query.container
-      }
+    result =
+      nocache: true
+      path: query.path
+      container: query.container
+    if ('undefined' isnt typeof match.value) and not match.factory?
+      result.value = match.value
+    else if match.factory? and ('undefined' is typeof match.value)
+      result.factory = match.factory
+    else
+      throw new Error "callback must return either null or an object with either the value or factory property but returned #{match}"
+
+    if match.override? and match.override
+      return result
+
+    inner(query) or result
