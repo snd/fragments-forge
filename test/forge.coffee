@@ -767,6 +767,36 @@ module.exports =
 
 ###################################################################################
 # select
+#
+  'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+      calls =
+        where: []
+        order: []
+      table = {}
+      result = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.order = (arg) ->
+        calls.order.push arg
+        table
+      table.find = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataSelectResolver()]
+
+      hinoki.get(container, 'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrder')
+        .then (accessor) ->
+          test.equals result, accessor 1, 2
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.deepEqual calls.order, ['updated_at DESC, order ASC']
+          test.done()
 
 ###################################################################################
 # insert
