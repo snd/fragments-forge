@@ -64,6 +64,8 @@ module.exports.splitArray = (array, value) ->
         matchingSequence = []
       currentPartition.push array[i]
     i++
+  if matchingSequence.length isnt 0
+    currentPartition = currentPartition.concat(matchingSequence)
   partitions.push currentPartition
   partitions
 
