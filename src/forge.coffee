@@ -679,12 +679,30 @@ module.exports.newMockResolver = (aliasToNamespaces = {}) ->
       when 1 then results[0].resolved
       else
         lines = [
-          "ambiguity in namespace resolver."
           "\"name\" maps to multiple resolvable names:"
         ]
         results.forEach (result) ->
-          lines.push "#{result.mappedName} (#{alias} -> #{result.namespace})"
+          lines.push "#{result.mappedName} (#{aliasPart} -> #{result.namespace})"
         throw new Error lines.join('\n')
 
   resolver.$name = 'namespaceResolver'
   return resolver
+
+###################################################################################
+# null
+
+# resolve all paths that match the predicate to null if they
+# can not be resolved by an inner resolver
+module.exports.newNullResolver = (predicate) ->
+  resolver = (query, inner) ->
+    # if the name is directly resolvable return it
+    value = inner query
+    if value?
+      return value
+
+    if predicate query.path
+      return {
+        value: null
+        path: query.path
+        container: query.container
+      }

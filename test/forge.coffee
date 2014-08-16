@@ -1142,3 +1142,44 @@ module.exports =
         hinoki.get(container, 'urlApi_passwordForgot').then (result) ->
           test.equal result, value
           test.done()
+
+###################################################################################
+# null
+
+  'null':
+
+    'passthrough': (test) ->
+      test.expect 1
+      predicate = -> test.ok false
+      container =
+        values:
+          'x': {}
+        resolvers: [forge.newNullResolver(predicate)]
+
+      hinoki.get(container, 'x').then (result) ->
+        test.equal result, container.values.x
+        test.done()
+
+    'predicate match': (test) ->
+      test.expect 2
+      predicate = (path) ->
+        test.deepEqual path, ['x']
+        path[0] is 'x'
+      container =
+        resolvers: [forge.newNullResolver(predicate)]
+
+      hinoki.get(container, 'x').then (result) ->
+        test.equal null, result
+        test.done()
+
+    'no predicate match': (test) ->
+      test.expect 1
+      predicate = (path) ->
+        test.deepEqual path, ['y']
+        path[0] is 'x'
+      container =
+        resolvers: [forge.newNullResolver(predicate)]
+
+      hinoki.get(container, 'y')
+        .catch hinoki.UnresolvableFactoryError, ->
+          test.done()
