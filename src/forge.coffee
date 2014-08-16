@@ -358,6 +358,12 @@ module.exports.newDataSelectResolver = (options = {}) ->
           condition = {}
           condition[x] = args[index]
           q = q.where condition
+        if match.order.length isnt 0
+          order = match.order
+            .map (x) ->
+              x.column + ' ' + x.direction
+            .join (', ')
+          q = q.order order
         q.find()
 
     factory.$inject = [
