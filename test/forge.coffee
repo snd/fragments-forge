@@ -767,7 +767,7 @@ module.exports =
 
 ###################################################################################
 # select
-#
+
   'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
       calls =
         where: []
@@ -808,6 +808,24 @@ module.exports =
       name: 'userWhere'
 
     test.done()
+
+  'insertUser': (test) ->
+      result = {}
+      data = {}
+      table =
+        insert: (arg) ->
+          test.equals arg, data
+          result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataInsertResolver()]
+
+      hinoki.get(container, 'insertUser')
+        .then (accessor) ->
+          test.equals result, accessor data
+          test.done()
 
 ###################################################################################
 # update
