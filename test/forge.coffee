@@ -28,26 +28,26 @@ module.exports =
       test.done()
 
     'joinCamelcase': (test) ->
-      test.equals '', forge.joinCamelcase []
-      test.equals 'a', forge.joinCamelcase ['a']
-      test.equals 'first', forge.joinCamelcase ['first']
-      test.equals 'firstWhereId', forge.joinCamelcase ['first', 'where', 'id']
+      test.equal '', forge.joinCamelcase []
+      test.equal 'a', forge.joinCamelcase ['a']
+      test.equal 'first', forge.joinCamelcase ['first']
+      test.equal 'firstWhereId', forge.joinCamelcase ['first', 'where', 'id']
 
       test.done()
 
     'joinUnderscore': (test) ->
-      test.equals '', forge.joinUnderscore []
-      test.equals 'first', forge.joinUnderscore ['first']
-      test.equals 'first_where_id', forge.joinUnderscore ['first', 'where', 'id']
+      test.equal '', forge.joinUnderscore []
+      test.equal 'first', forge.joinUnderscore ['first']
+      test.equal 'first_where_id', forge.joinUnderscore ['first', 'where', 'id']
 
       test.done()
 
     'findIndex': (test) ->
-      test.equals -1, forge.findIndex [], -> true
-      test.equals 0, forge.findIndex [1], (x) -> x is 1
-      test.equals -1, forge.findIndex [1], (x) -> x is 2
-      test.equals 1, forge.findIndex [1, 2, 3], (x) -> x > 1
-      test.equals -1, forge.findIndex [1, 2, 3], (x) -> x > 3
+      test.equal -1, forge.findIndex [], -> true
+      test.equal 0, forge.findIndex [1], (x) -> x is 1
+      test.equal -1, forge.findIndex [1], (x) -> x is 2
+      test.equal 1, forge.findIndex [1, 2, 3], (x) -> x > 1
+      test.equal -1, forge.findIndex [1, 2, 3], (x) -> x > 3
 
       test.done()
 
@@ -204,7 +204,7 @@ module.exports =
         resolvers: [forge.newEnvResolver()]
 
       hinoki.get(container, 'envIntPort').then (actual) ->
-        test.equals actual, expected
+        test.equal actual, expected
         test.done()
 
     'envStringBaseUrl':
@@ -220,7 +220,7 @@ module.exports =
 
           hinoki.get(container, 'envStringBaseUrl')
             .then (result) ->
-              test.equals result, '/test'
+              test.equal result, '/test'
               test.done()
 
         'must be present': (test) ->
@@ -231,7 +231,7 @@ module.exports =
 
           hinoki.get(container, 'envStringBaseUrl')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var BASE_URL must not be blank'
+              test.equal error.exception.message, 'env var BASE_URL must not be blank'
               test.done()
 
         'must not be blank': (test) ->
@@ -243,7 +243,7 @@ module.exports =
 
           hinoki.get(container, 'envStringBaseUrl')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var BASE_URL must not be blank'
+              test.equal error.exception.message, 'env var BASE_URL must not be blank'
               test.done()
 
       'maybe':
@@ -256,7 +256,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeStringBaseUrl')
             .then (result) ->
-              test.equals result, null
+              test.equal result, null
               test.done()
           container =
             values:
@@ -272,7 +272,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeStringBaseUrl')
             .then (result) ->
-              test.equals result, null
+              test.equal result, null
               test.done()
 
 
@@ -285,7 +285,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeStringBaseUrl')
             .then (result) ->
-              test.equals result, '/test'
+              test.equal result, '/test'
               test.done()
 
     'envBoolIsActive':
@@ -301,7 +301,7 @@ module.exports =
 
           hinoki.get(container, 'envBoolIsActive')
             .then (result) ->
-              test.equals true, result
+              test.equal true, result
               test.done()
 
         'false': (test) ->
@@ -313,7 +313,7 @@ module.exports =
 
           hinoki.get(container, 'envBoolIsActive')
             .then (result) ->
-              test.equals false, result
+              test.equal false, result
               test.done()
 
         'must be true or false': (test) ->
@@ -325,7 +325,7 @@ module.exports =
 
           hinoki.get(container, 'envBoolIsActive')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+              test.equal error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
               test.done()
 
       'maybe':
@@ -339,7 +339,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeBoolIsActive')
             .then (result) ->
-              test.equals result, null
+              test.equal result, null
               test.done()
 
         'true': (test) ->
@@ -351,7 +351,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeBoolIsActive')
             .then (result) ->
-              test.equals true, result
+              test.equal true, result
               test.done()
 
         'false': (test) ->
@@ -363,7 +363,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeBoolIsActive')
             .then (result) ->
-              test.equals false, result
+              test.equal false, result
               test.done()
 
         'must be true or false': (test) ->
@@ -375,7 +375,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeBoolIsActive')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+              test.equal error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
               test.done()
 
     'envIntPort':
@@ -391,7 +391,7 @@ module.exports =
 
           hinoki.get(container, 'envIntPort')
             .then (result) ->
-              test.equals 9000, result
+              test.equal 9000, result
               test.done()
 
         'must be an integer': (test) ->
@@ -403,7 +403,7 @@ module.exports =
 
           hinoki.get(container, 'envIntPort')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var PORT must be an integer'
+              test.equal error.exception.message, 'env var PORT must be an integer'
               test.done()
 
       'maybe':
@@ -416,7 +416,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeIntPort')
             .then (result) ->
-              test.equals null, result
+              test.equal null, result
               test.done()
 
         'success': (test) ->
@@ -428,7 +428,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeIntPort')
             .then (result) ->
-              test.equals 9000, result
+              test.equal 9000, result
               test.done()
 
         'must be an integer': (test) ->
@@ -440,7 +440,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeIntPort')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var PORT must be an integer'
+              test.equal error.exception.message, 'env var PORT must be an integer'
               test.done()
 
     'envFloatPi':
@@ -456,7 +456,7 @@ module.exports =
 
           hinoki.get(container, 'envFloatPi')
             .then (result) ->
-              test.equals 3.141, result
+              test.equal 3.141, result
               test.done()
 
         'must be a float': (test) ->
@@ -468,7 +468,7 @@ module.exports =
 
           hinoki.get(container, 'envFloatPi')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var PI must be a float'
+              test.equal error.exception.message, 'env var PI must be a float'
               test.done()
 
       'maybe':
@@ -481,7 +481,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeFloatPi')
             .then (result) ->
-              test.equals null, result
+              test.equal null, result
               test.done()
 
         'success': (test) ->
@@ -493,7 +493,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeFloatPi')
             .then (result) ->
-              test.equals 3.141, result
+              test.equal 3.141, result
               test.done()
 
         'must be a float': (test) ->
@@ -505,7 +505,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeFloatPi')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var PI must be a float'
+              test.equal error.exception.message, 'env var PI must be a float'
               test.done()
 
     'envJsonConfig':
@@ -538,7 +538,7 @@ module.exports =
 
           hinoki.get(container, 'envJsonConfig')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+              test.equal error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
               test.done()
 
       'maybe':
@@ -551,7 +551,7 @@ module.exports =
 
           hinoki.get(container, 'envMaybeJsonConfig')
             .then (result) ->
-              test.equals null, result
+              test.equal null, result
               test.done()
 
         'success': (test) ->
@@ -580,7 +580,7 @@ module.exports =
 
           hinoki.get(container, 'envJsonConfig')
             .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equals error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+              test.equal error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
               test.done()
 
 ###################################################################################
@@ -605,7 +605,7 @@ module.exports =
 
       hinoki.get(container, 'userTable')
         .then (result) ->
-          test.equals result, container.values.userTable
+          test.equal result, container.values.userTable
           test.done()
 
     'userTable': (test) ->
@@ -757,7 +757,7 @@ module.exports =
 
       hinoki.get(container, 'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrder')
         .then (accessor) ->
-          test.equals result, accessor 1, 2
+          test.equal result, accessor 1, 2
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
@@ -790,7 +790,7 @@ module.exports =
 
       hinoki.get(container, 'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrder')
         .then (accessor) ->
-          test.equals result, accessor 1, 2
+          test.equal result, accessor 1, 2
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
@@ -814,7 +814,7 @@ module.exports =
       data = {}
       table =
         insert: (arg) ->
-          test.equals arg, data
+          test.equal arg, data
           result
 
       container =
@@ -824,7 +824,7 @@ module.exports =
 
       hinoki.get(container, 'insertUser')
         .then (accessor) ->
-          test.equals result, accessor data
+          test.equal result, accessor data
           test.done()
 
 ###################################################################################
@@ -848,7 +848,7 @@ module.exports =
         calls.where.push arg
         table
       table.update = (arg) ->
-        test.equals arg, data
+        test.equal arg, data
         result
 
       container =
@@ -858,7 +858,7 @@ module.exports =
 
       hinoki.get(container, 'updateUserWhereIdWhereCreatedAt')
         .then (accessor) ->
-          test.equals result, accessor data, 1, 2
+          test.equal result, accessor data, 1, 2
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
@@ -894,7 +894,7 @@ module.exports =
 
       hinoki.get(container, 'deleteUserWhereIdWhereCreatedAt')
         .then (accessor) ->
-          test.equals result, accessor 1, 2
+          test.equal result, accessor 1, 2
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
@@ -944,8 +944,8 @@ module.exports =
         ]
 
       hinoki.get(container, 'opinion').then (result) ->
-        test.equals result, container.values.acrobat_opinion
-        test.equals result, value
+        test.equal result, container.values.acrobat_opinion
+        test.equal result, value
         test.done()
 
     'namespace to global with match with result': (test) ->
@@ -958,7 +958,7 @@ module.exports =
       query =
         path: ['acrobat_opinion']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
@@ -998,7 +998,7 @@ module.exports =
       query =
         path: ['tourist_opinion']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
@@ -1018,7 +1018,7 @@ module.exports =
       query =
         path: ['tourist_opinion']
         container: {}
-      test.equals null, resolver query, (arg) ->
+      test.equal null, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
@@ -1060,7 +1060,7 @@ module.exports =
       query =
         path: ['tourist_opinion']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
@@ -1081,7 +1081,7 @@ module.exports =
       query =
         path: ['tourist_bravo_opinion']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
 
@@ -1143,7 +1143,7 @@ module.exports =
       query =
         path: ['userAgent']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
@@ -1158,7 +1158,7 @@ module.exports =
       query =
         path: ['urlApi_passwordForgot']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
@@ -1187,7 +1187,7 @@ module.exports =
       query =
         path: ['_']
         container: {}
-      test.equals x, resolver query, (arg) ->
+      test.equal x, resolver query, (arg) ->
         calls.push arg
         return returns.pop()
       test.deepEqual calls, [
