@@ -613,10 +613,10 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
       else
         lines = [
           "ambiguity in namespace resolver."
-          "\"name\" maps to multiple resolvable names:"
+          "\"#{query.path[0]}\" maps to multiple resolvable names:"
         ]
         results.forEach (result) ->
-          lines.push "#{result.mappedName} (#{alias} -> #{result.namespace})"
+          lines.push "#{result.mappedName} (#{aliasPart} -> #{result.namespace})"
         throw new Error lines.join('\n')
 
   resolver.$name = 'namespaceResolver'
