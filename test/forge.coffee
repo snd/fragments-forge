@@ -598,55 +598,44 @@ module.exports =
   'newAliasResolver':
 
     'passthrough': (test) ->
-      x = {}
+      container =
+        values:
+          thing: {}
+        resolvers: [forge.newAliasResolver()]
 
-      resolver = forge.newAliasResolver()
-      query =
-        path: ['thing']
-        container: {}
-      test.equals x, resolver query, (arg) ->
-        test.equals query, arg
-        return x
-
-      test.done()
+      hinoki.get(container, 'thing').then (result) ->
+        test.equal result, container.values.thing
+        test.done()
 
     'no alias': (test) ->
-      x = {}
+      container =
+        resolvers: [forge.newAliasResolver()]
 
-      resolver = forge.newAliasResolver()
-      query =
-        path: ['thing']
-        container: {}
-      test.equals null, resolver query, (arg) ->
-        test.equals query, arg
-        return null
+      hinoki.get(container, 'thing')
+        .catch hinoki.UnresolvableFactoryError, (error) ->
+        test.done()
 
-      test.done()
+    'value': (test) ->
+      container =
+        values:
+          thing: {}
+        resolvers: [forge.newAliasResolver({alias: 'thing'})]
 
-    'alias': (test) ->
-      x = {}
+      hinoki.get(container, 'alias').then (result) ->
+        test.equal result, container.values.thing
+        test.done()
 
-      resolver = forge.newAliasResolver
-        alias: 'name'
+    'factory': (test) ->
+      value = {}
+      container =
+        factories:
+          thing: -> value
+        resolvers: [forge.newAliasResolver({alias: 'thing'})]
 
-      query =
-        path: ['alias']
-        container: {}
-
-      calls = []
-      test.equals x, resolver query, (arg) ->
-        calls.push arg
-        if calls.length is 1
-          null
-        else
-          x
-
-      test.deepEqual calls, [
-        {path: ['alias'], container: query.container}
-        {path: ['name'], container: query.container}
-      ]
-
-      test.done()
+      hinoki.get(container, 'alias').then (result) ->
+        test.equal value, result
+        test.equal value, container.values.thing
+        test.done()
 
 ###################################################################################
 # data accessor
