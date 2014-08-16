@@ -1,6 +1,13 @@
 ###################################################################################
 # util
 
+module.exports.coerceToArray = (arg) ->
+  if Array.isArray arg
+    return arg
+  unless arg?
+    return []
+  [arg]
+
 module.exports.uppercaseFirstLetter = (string) ->
   string.charAt(0).toUpperCase() + string.slice(1)
 
@@ -34,15 +41,27 @@ module.exports.findIndex = (array, predicate) ->
   return -1
 
 module.exports.splitArray = (array, value) ->
+  splitSequence = module.exports.coerceToArray value
   partitions = []
   currentPartition = []
   i = 0
   length = array.length
+  matchingSequence = []
   while i < length
-    if array[i] is value
-      partitions.push currentPartition
-      currentPartition = []
+    # matching so far
+    if array[i] is splitSequence[matchingSequence.length]
+      matchingSequence.push value[matchingSequence.length]
+      # complete match
+      if splitSequence.length is matchingSequence.length
+        partitions.push currentPartition
+        currentPartition = []
+        matchingSequence = []
+    # not matching
     else
+      # no longer matching
+      if matchingSequence.length isnt 0
+        currentPartition = currentPartition.concat(matchingSequence)
+        matchingSequence = []
       currentPartition.push array[i]
     i++
   partitions.push currentPartition

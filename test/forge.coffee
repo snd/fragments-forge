@@ -81,6 +81,44 @@ module.exports =
       test.deepEqual [['first', 'order', 'report'], ['created', 'at'], ['id']],
         forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where', 'id'], 'where'
 
+      test.deepEqual [[]],
+        forge.splitArray [], []
+      test.deepEqual [[]],
+        forge.splitArray [], ['where']
+      test.deepEqual [[], []],
+        forge.splitArray ['where'], ['where']
+      test.deepEqual [['first']],
+        forge.splitArray ['first'], ['where']
+      test.deepEqual [['first', 'order', 'report']],
+        forge.splitArray ['first', 'order', 'report'], ['where']
+      test.deepEqual [['first', 'order', 'report'], []],
+        forge.splitArray ['first', 'order', 'report', 'where'], ['where']
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at'], ['where']
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at'], []],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where'], ['where']
+      test.deepEqual [['first', 'order', 'report'], ['created', 'at'], ['id']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'created', 'at', 'where', 'id'], ['where']
+
+      test.deepEqual [[]],
+        forge.splitArray [], []
+      test.deepEqual [[]],
+        forge.splitArray [], ['order', 'by']
+      test.deepEqual [[], []],
+        forge.splitArray ['order', 'by'], ['order', 'by']
+      test.deepEqual [['first']],
+        forge.splitArray ['first'], ['order', 'by']
+      test.deepEqual [['first', 'order', 'report']],
+        forge.splitArray ['first', 'order', 'report'], ['order', 'by']
+      test.deepEqual [['first', 'order', 'report', 'where', 'order', 'id']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'order', 'id'], ['order', 'by']
+      test.deepEqual [['first', 'order', 'report', 'where', 'order', 'id'], []],
+        forge.splitArray ['first', 'order', 'report', 'where', 'order', 'id', 'order', 'by'], ['order', 'by']
+      test.deepEqual [['first', 'order', 'report', 'where', 'order', 'id'], ['created', 'at', 'desc']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'order', 'id', 'order', 'by', 'created', 'at', 'desc'], ['order', 'by']
+      test.deepEqual [['first', 'order', 'report', 'where', 'order', 'id'], ['created', 'at', 'desc'], ['count', 'asc']],
+        forge.splitArray ['first', 'order', 'report', 'where', 'order', 'id', 'order', 'by', 'created', 'at', 'desc', 'order', 'by', 'count', 'asc'], ['order', 'by']
+
       test.done()
 
     'reverseIndex': (test) ->
