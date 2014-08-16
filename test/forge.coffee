@@ -676,7 +676,7 @@ module.exports =
         test.done()
 
 ###################################################################################
-# first
+# parse select
 
   'parseDataSelect': (test) ->
     test.deepEqual forge.parseDataSelect('firstUser'),
@@ -729,6 +729,38 @@ module.exports =
       where: ['order_id', 'created_at']
 
     test.done()
+
+###################################################################################
+# first
+
+  'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+      calls =
+        where: []
+        order: []
+      table = {}
+      result = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.order = (arg) ->
+        calls.order.push arg
+        table
+      table.first = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataFirstResolver()]
+
+      hinoki.get(container, 'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder')
+        .then (accessor) ->
+          test.equals result, accessor 1, 2
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.done()
 
 ###################################################################################
 # select
