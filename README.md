@@ -83,7 +83,7 @@ selectPublicContentWhereIsActiveWhereViewCountOrderByViewCountOrderByIdDesc(
 });
 ```
 
-would execute something like this query
+would execute a query similar to
 ```sql
 SELECT *
 FROM public_content
@@ -115,7 +115,7 @@ insertUser({
 });
 ```
 
-would execute something like this query
+would execute a query similar to
 ```sql
 INSERT INTO user (email, password)
 VALUES ('test@example.com', 'secret');
@@ -152,7 +152,7 @@ updateUserWhereIdWhereName(
 });
 ```
 
-would execute something like this query
+would execute a query similar to
 ```sql
 UPDATE user
 SET email = 'test@example.com'
@@ -187,7 +187,7 @@ deleteUserWhereName('alice').then(function(deletedUser) {
 });
 ```
 
-would execute something like this query
+would execute a query similar to
 ```sql
 DELETE FROM user WHERE name = 'alice';
 ```
