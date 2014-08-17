@@ -2,28 +2,11 @@
 
 > scrap your boilerplate by auto-generating dependencies!
 
-#### throughout this document a simple regex-like pattern language will be used:
-
-- `"String"` - static string
-- `Variable` - user-provided, non-empty, camelcased string that is parsed from the pattern
-- `(a | b | c)` - a or b or c
-- `(a)*` - zero or many a
-- `(a)+` - one or many a
-- `(a)?` - optional a (zero or one)
-- spaces are used purely for readability
-
-for example the pattern `"env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar`
-means the string `env` followed by the optional string `Maybe` followed by
-either `String`, `Bool`, `Int`, `Float`, or `Json` followed by any camelcased
-string which will be bound to `EnvVar`.
-
-the string `envMaybeStringDatabaseUrl` would satisfy that pattern with `EnvVar = DatabaseUrl`.
-
 ## env
 
 > quickly read and parse environment variables!
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 "env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar
@@ -49,7 +32,7 @@ and looked up as property on the `env` dependency.
 > hinoki doesn't support circular dependencies.
 > fix that mismatch!
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 "table" Table
@@ -66,7 +49,7 @@ looked up as property on the `table` dependency.
 
 ## select
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 ("first" | "select") Table ("Where" Column)* ("OrderBy" Column ("Asc" | "Desc")?)*
@@ -98,7 +81,7 @@ if it starts with `first` it will limit the query by 1 and resolve to the first 
 
 ## insert
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 "insert" Table
@@ -121,7 +104,7 @@ INSERT INTO user (email, password)
 VALUES ('test@example.com', 'secret');
 ```
 
-### WARNING!
+#### WARNING!
 
 in order to prevent a mass-assignment security vulnerability
 the factory returned by `"insert" Table` requires
@@ -132,13 +115,13 @@ a dependency named `table "InsertableColumns"`
 
 ## update
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 "update" Table ("Where" Column)+
 ```
 
-*note the + at the end: updates without conditions are not allowed for security reasons*
+*note the + at the end: updates without conditions are not allowed for security reasons!*
 
 this code
 
@@ -160,7 +143,7 @@ WHERE id = 100
 AND name IS NOT NULL;
 ```
 
-### WARNING!
+#### WARNING!
 
 in order to prevent a mass-assignment security vulnerability
 the factory returned by `"update" Table` requires
@@ -171,13 +154,13 @@ a dependency called `table "UpdateableColumns"`
 
 ## delete
 
-pattern:
+[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
 
 ```
 "delete" Table ("Where" Column)+
 ```
 
-*note the + at the end: deletes without conditions are not allowed for security reasons*
+*note the + at the end: deletes without conditions are not allowed for security reasons!*
 
 this code
 
@@ -193,6 +176,23 @@ DELETE FROM user WHERE name = 'alice';
 ```
 
 *serverside only - for now*
+
+#### throughout this document a simple regex-like pattern language will be used:
+
+- `"String"` - static string
+- `Variable` - user-provided, non-empty, camelcased string that is parsed from the pattern
+- `(a | b | c)` - a or b or c
+- `(a)*` - zero or many a
+- `(a)+` - one or many a
+- `(a)?` - optional a (zero or one)
+- spaces are used purely for readability
+
+for example the pattern `"env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar`
+means the string `env` followed by the optional string `Maybe` followed by
+either `String`, `Bool`, `Int`, `Float`, or `Json` followed by any camelcased
+string which will be bound to `EnvVar`.
+
+the string `envMaybeStringDatabaseUrl` would satisfy that pattern with `EnvVar = DatabaseUrl`.
 
 ## ideas and raw thoughts
 
