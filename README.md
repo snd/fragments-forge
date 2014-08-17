@@ -6,7 +6,7 @@
 
 > quickly read and parse environment variables!
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 "env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar
@@ -32,7 +32,7 @@ and looked up as property on the `env` dependency.
 > hinoki doesn't support circular dependencies.
 > fix that mismatch!
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 "table" Table
@@ -49,7 +49,7 @@ looked up as property on the `table` dependency.
 
 ## select
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 ("first" | "select") Table ("Where" Column)* ("OrderBy" Column ("Asc" | "Desc")?)*
@@ -81,7 +81,7 @@ if it starts with `first` it will limit the query by 1 and resolve to the first 
 
 ## insert
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 "insert" Table
@@ -115,7 +115,7 @@ a dependency named `table "InsertableColumns"`
 
 ## update
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 "update" Table ("Where" Column)+
@@ -154,7 +154,7 @@ a dependency called `table "UpdateableColumns"`
 
 ## delete
 
-[pattern:](#throughout-this-document-a-simple-regex-like-pattern-language-will-be-used)
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
 "delete" Table ("Where" Column)+
