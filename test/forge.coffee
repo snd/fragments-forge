@@ -848,17 +848,22 @@ module.exports =
     test.done()
 
   'insertUser': (test) ->
-      test.expect 2
+      test.expect 3
       result = {}
       data = {}
-      table =
-        insert: (arg) ->
-          test.equal arg, data
-          result
+      allowedColumns = {}
+      table = {}
+      table.allowedColumns = (arg) ->
+        test.equal arg, allowedColumns
+        table
+      table.insert = (arg) ->
+        test.equal arg, data
+        result
 
       container =
         values:
           userTable: table
+          userInsertableColumns: allowedColumns
         resolvers: [forge.newDataInsertResolver()]
 
       hinoki.get(container, 'insertUser')
@@ -878,14 +883,18 @@ module.exports =
     test.done()
 
   'updateUserWhereIdWhereCreatedAt': (test) ->
-      test.expect 3
+      test.expect 4
       calls =
         where: []
-      table = {}
       result = {}
       data = {}
+      allowedColumns = {}
+      table = {}
       table.where = (arg) ->
         calls.where.push arg
+        table
+      table.allowedColumns = (arg) ->
+        test.equal arg, allowedColumns
         table
       table.update = (arg) ->
         test.equal arg, data
@@ -894,6 +903,7 @@ module.exports =
       container =
         values:
           userTable: table
+          userUpdateableColumns: allowedColumns
         resolvers: [forge.newDataUpdateResolver()]
 
       hinoki.get(container, 'updateUserWhereIdWhereCreatedAt')
