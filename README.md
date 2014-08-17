@@ -177,7 +177,7 @@ DELETE FROM user WHERE name = 'alice';
 
 *serverside only - for now*
 
-#### throughout this document a simple regex-like pattern language will be used:
+#### simple regex-like pattern language used in this document
 
 - `"String"` - static string
 - `Variable` - user-provided, non-empty, camelcased string that is parsed from the pattern
@@ -241,6 +241,3 @@ opinionated
 convention over configuration.
 entirely opt in.
 provides defaults which can all be explicitely overwritten.
-
-whitelisting on the entire table is a security risk
-you need a convention for the columns for the blaze insert and update
