@@ -621,34 +621,3 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
 
   resolver.$name = 'namespaceResolver'
   return resolver
-
-###################################################################################
-# surgical
-
-# intercepts, mocks
-# resolve all paths that match the predicate to null if they
-# can not be resolved by an inner resolver.
-# can also be used to 
-# 
-# disables caching.
-module.exports.newSurgicalResolver = (callback) ->
-  resolver = (query, inner) ->
-    match = callback query.path
-    unless match?
-      return inner query
-
-    result =
-      nocache: true
-      path: query.path
-      container: query.container
-    if ('undefined' isnt typeof match.value) and not match.factory?
-      result.value = match.value
-    else if match.factory? and ('undefined' is typeof match.value)
-      result.factory = match.factory
-    else
-      throw new Error "callback must return either null or an object with either the value or factory property but returned #{match}"
-
-    if match.override? and match.override
-      return result
-
-    inner(query) or result
