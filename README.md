@@ -15,13 +15,15 @@
 for example the pattern `"env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar`
 means the string `env` followed by the optional string `Maybe` followed by
 either `String`, `Bool`, `Int`, `Float`, or `Json` followed by any camelcased
-word which will be bound to `EnvVar`.
+string which will be bound to `EnvVar`.
 
 the string `envMaybeStringDatabaseUrl` would satisfy that pattern with `EnvVar = DatabaseUrl`.
 
 ## env
 
 > quickly read and parse environment variables!
+
+pattern:
 
 ```
 "env" ("Maybe")? ("String" | "Bool" | "Int" | "Float" | "Json") EnvVar
@@ -47,6 +49,8 @@ and looked up as property on the `env` dependency.
 > hinoki doesn't support circular dependencies.
 > fix that mismatch!
 
+pattern:
+
 ```
 "table" Table
 ```
@@ -62,39 +66,121 @@ looked up as property on the `table` dependency.
 
 ## select
 
+pattern:
+
 ```
 ("first" | "select") Table ("Where" Column)* ("OrderBy" Column ("Asc" | "Desc")?)*
 ```
 
-if it starts with `first`
+this code
+
+```javascript
+selectPublicContentWhereIsActiveWhereViewCountOrderByViewCountOrderByIdDesc(
+  true,
+  {$lt: 100}
+).then(function(rows) {
+  // ...
+});
+```
+
+would execute something like this query
+```sql
+SELECT *
+FROM public_content
+WHERE is_active = ?
+AND view_count < ?
+ORDER BY view_count ASC, id DESC;
+```
+with these params: `[true, 100]`.
+
+if it starts with `first` it will limit the query by 1 and resolve to the first row or undefined if no rows were returned.
 
 *serverside only - for now*
 
 ## insert
 
+pattern:
+
 ```
 "insert" Table
 ```
+
+this code
+
+```javascript
+insertUser({
+  email: 'test@example.com',
+  password: 'secret'
+}).then(function(insertedUser) {
+  // ...
+});
+```
+
+would execute something like this query
+```sql
+INSERT INTO user (email, password)
+VALUES (?, ?);
+```
+with these params: `['test@example.com', 'secret']`.
 
 *serverside only - for now*
 
 ## update
 
+pattern:
+
 ```
 "update" Table ("Where" Column)+
 ```
 
-*note the + at the end - updates without conditions are not allowed for security reasons*
+*note the + at the end: updates without conditions are not allowed for security reasons*
+
+this code
+
+```javascript
+updateUserWhereIdWhereName(
+  {email: 'test@example.com'},
+  100,
+  {$null: false}
+).then(function(updatedUser) {
+  // ...
+});
+```
+
+would execute something like this query
+```sql
+UPDATE user
+SET email = ?
+WHERE id = ?
+AND name IS NOT NULL;
+```
+with these params: `['test@example.com', '100']`.
 
 *serverside only - for now*
 
 ## delete
 
+pattern:
+
 ```
 "delete" Table ("Where" Column)+
 ```
 
-*note the + at the end - deletes without conditions are not allowed for security reasons*
+*note the + at the end: deletes without conditions are not allowed for security reasons*
+
+this code
+
+```javascript
+deleteUserWhereName('alice').then(function(deletedUser) {
+  // ...
+});
+```
+
+would execute something like this query
+```sql
+DELETE FROM user WHERE name = ?;
+```
+with these params: `['alice']`
 
 *serverside only - for now*
 
@@ -145,3 +231,6 @@ opinionated
 convention over configuration.
 entirely opt in.
 provides defaults which can all be explicitely overwritten.
+
+whitelisting on the entire table is a security risk
+you need a convention for the columns for the blaze insert and update
