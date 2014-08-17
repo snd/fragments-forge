@@ -1207,39 +1207,3 @@ module.exports =
         hinoki.get(container, 'y')
           .catch hinoki.UnresolvableFactoryError, ->
             test.done()
-
-    'mocking out a single factory for any require': (test) ->
-      test.expect 4
-      predicate = (path) ->
-        if path[0] is 'bravo'
-          return {
-            override: true
-            factory: (charlie) ->
-              charlie.split('').reverse().join('')
-            }
-      container =
-        factories:
-          alpha: -> 'alpha'
-          bravo: -> 'bravo'
-          charlie: -> 'charlie'
-          alpha_bravo: (alpha, bravo) ->
-            alpha + '_' + bravo
-          bravo_charlie: (bravo, charlie) ->
-            bravo + '_' + charlie
-          alpha_charlie: (alpha, charlie) ->
-            alpha + '_' + charlie
-        resolvers: [forge.newSurgicalResolver(predicate)]
-
-      hinoki.get(container, ['alpha_bravo', 'bravo_charlie', 'alpha_charlie'])
-        .spread (alpha_bravo, bravo_charlie, alpha_charlie) ->
-          test.equal alpha_bravo, 'alpha_eilrahc'
-          test.equal bravo_charlie, 'eilrahc_charlie'
-          test.equal alpha_charlie, 'alpha_charlie'
-          # note that bravo is not cached
-          test.deepEqual container.values,
-            alpha: 'alpha',
-            charlie: 'charlie',
-            alpha_charlie: 'alpha_charlie',
-            bravo_charlie: 'eilrahc_charlie',
-            alpha_bravo: 'alpha_eilrahc'
-          test.done()
