@@ -87,11 +87,10 @@ would execute something like this query
 ```sql
 SELECT *
 FROM public_content
-WHERE is_active = ?
-AND view_count < ?
+WHERE is_active = true
+AND view_count < 100
 ORDER BY view_count ASC, id DESC;
 ```
-with these params: `[true, 100]`.
 
 if it starts with `first` it will limit the query by 1 and resolve to the first row or undefined if no rows were returned.
 
@@ -119,9 +118,15 @@ insertUser({
 would execute something like this query
 ```sql
 INSERT INTO user (email, password)
-VALUES (?, ?);
+VALUES ('test@example.com', 'secret');
 ```
-with these params: `['test@example.com', 'secret']`.
+
+### WARNING!
+
+in order to prevent a mass-assignment security vulnerability
+the factory returned by `"insert" Table` requires
+a dependency named `table "InsertableColumns"`
+(example: `userInsertableColumns`) to be present!
 
 *serverside only - for now*
 
@@ -150,11 +155,17 @@ updateUserWhereIdWhereName(
 would execute something like this query
 ```sql
 UPDATE user
-SET email = ?
-WHERE id = ?
+SET email = 'test@example.com'
+WHERE id = 100
 AND name IS NOT NULL;
 ```
-with these params: `['test@example.com', '100']`.
+
+### WARNING!
+
+in order to prevent a mass-assignment security vulnerability
+the factory returned by `"update" Table` requires
+a dependency called `table "UpdateableColumns"`
+(example: `userUpdateColumns`) to be present!
 
 *serverside only - for now*
 
@@ -178,9 +189,8 @@ deleteUserWhereName('alice').then(function(deletedUser) {
 
 would execute something like this query
 ```sql
-DELETE FROM user WHERE name = ?;
+DELETE FROM user WHERE name = 'alice';
 ```
-with these params: `['alice']`
 
 *serverside only - for now*
 
