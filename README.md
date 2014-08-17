@@ -165,7 +165,7 @@ AND name IS NOT NULL;
 in order to prevent a mass-assignment security vulnerability
 the factory returned by `"update" Table` requires
 a dependency called `table "UpdateableColumns"`
-(example: `userUpdateColumns`) to be present!
+(example: `userUpdateableColumns`) to be present!
 
 *serverside only - for now*
 
