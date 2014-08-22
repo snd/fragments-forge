@@ -232,8 +232,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envStringBaseUrl')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var BASE_URL must not be blank'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var BASE_URL must not be blank'
               test.done()
 
         'must not be blank': (test) ->
@@ -245,8 +245,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envStringBaseUrl')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var BASE_URL must not be blank'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var BASE_URL must not be blank'
               test.done()
 
       'maybe':
@@ -279,7 +279,6 @@ module.exports =
             .then (result) ->
               test.equal result, null
               test.done()
-
 
         'success': (test) ->
           test.expect 1
@@ -333,8 +332,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envBoolIsActive')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
               test.done()
 
       'maybe':
@@ -387,8 +386,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envMaybeBoolIsActive')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var IS_ACTIVE must be \'true\' or \'false\''
               test.done()
 
     'envIntPort':
@@ -417,8 +416,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envIntPort')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var PORT must be an integer'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var PORT must be an integer'
               test.done()
 
       'maybe':
@@ -457,8 +456,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envMaybeIntPort')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var PORT must be an integer'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var PORT must be an integer'
               test.done()
 
     'envFloatPi':
@@ -487,8 +486,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envFloatPi')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var PI must be a float'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var PI must be a float'
               test.done()
 
       'maybe':
@@ -527,8 +526,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envMaybeFloatPi')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var PI must be a float'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var PI must be a float'
               test.done()
 
     'envJsonConfig':
@@ -562,8 +561,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envJsonConfig')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
               test.done()
 
       'maybe':
@@ -607,8 +606,8 @@ module.exports =
             resolvers: [forge.newEnvResolver()]
 
           hinoki.get(container, 'envJsonConfig')
-            .catch hinoki.ExceptionInFactoryError, (error) ->
-              test.equal error.exception.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
+            .catch hinoki.errors.ErrorInFactory, (error) ->
+              test.equal error.error.message, 'env var CONFIG must be json. syntax error: Unexpected token o'
               test.done()
 
 ###################################################################################
@@ -622,7 +621,7 @@ module.exports =
         resolvers: [forge.newTableResolver()]
 
       hinoki.get(container, 'Table')
-        .catch hinoki.UnresolvableFactoryError, (error) ->
+        .catch hinoki.errors.Unresolvable, (error) ->
           test.deepEqual error.path, ['Table']
           test.done()
 
@@ -686,7 +685,7 @@ module.exports =
         resolvers: [forge.newAliasResolver()]
 
       hinoki.get(container, 'thing')
-        .catch hinoki.UnresolvableFactoryError, (error) ->
+        .catch hinoki.errors.Unresolvable, (error) ->
         test.done()
 
     'value': (test) ->
@@ -1011,7 +1010,7 @@ module.exports =
         resolvers: [forge.newNamespaceResolver('tourist': ['artist'])]
 
       hinoki.get(container, 'opinion')
-        .catch hinoki.UnresolvableFactoryError, (error) ->
+        .catch hinoki.errors.Unresolvable, (error) ->
           test.done()
 
     'namespace to namespace with match':
@@ -1048,7 +1047,7 @@ module.exports =
           resolvers: [forge.newNamespaceResolver('tourist': ['acrobat'])]
 
         hinoki.get(container, 'tourist_opinion')
-          .catch hinoki.UnresolvableFactoryError, (error) ->
+          .catch hinoki.errors.Unresolvable, (error) ->
             test.done()
 
     'namespace to multi-namespace with match with result': (test) ->
@@ -1100,7 +1099,7 @@ module.exports =
 
       hinoki.get(container, 'delta_charlie')
         .catch (error) ->
-          test.equal error.message, message
+          test.equal error.error.message, message
           test.done()
 
     'single underscore works': (test) ->

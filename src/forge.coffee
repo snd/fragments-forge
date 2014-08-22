@@ -122,13 +122,11 @@ module.exports.parseEnvSpec = (name, flagPrefix = 'env') ->
   }
 
 module.exports.newEnvResolver = (flagPrefix) ->
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     # we dont need to do anything
     if result?
       return result
-
-    name = query.path[0]
 
     spec = module.exports.parseEnvSpec name, flagPrefix
 
@@ -172,9 +170,8 @@ module.exports.newEnvResolver = (flagPrefix) ->
     factory.$match = spec
 
     return {
-      path: query.path
+      name: name
       factory: factory
-      container: query.container
     }
 
   resolver.$name = 'envResolver'
@@ -184,12 +181,12 @@ module.exports.newEnvResolver = (flagPrefix) ->
 # table
 
 module.exports.newTableResolver = ->
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    words = module.exports.splitCamelcase query.path[0]
+    words = module.exports.splitCamelcase name
 
     unless words[words.length - 1] is 'table'
       return
@@ -207,8 +204,7 @@ module.exports.newTableResolver = ->
 
     return {
       factory: factory
-      path: query.path
-      container: query.container
+      name: name
     }
 
   resolver.$name = 'tableResolver'
@@ -218,22 +214,17 @@ module.exports.newTableResolver = ->
 # alias
 
 module.exports.newAliasResolver = (aliasMap = {}) ->
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    alias = aliasMap[query.path[0]]
+    alias = aliasMap[name]
 
     unless alias?
       return
 
-    newPath = query.path.slice()
-    newPath[0] = alias
-
-    inner
-      path: newPath
-      container: query.container
+    inner alias
 
   resolver.$name = 'aliasResolver'
   return resolver
@@ -291,12 +282,12 @@ module.exports.newDataFirstResolver = (options = {}) ->
   options.nameToTable ?= (name) ->
     name + 'Table'
 
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    match = options.matcher query.path[0]
+    match = options.matcher name
     unless match? and match.type is 'first'
       return
 
@@ -324,8 +315,7 @@ module.exports.newDataFirstResolver = (options = {}) ->
 
     return {
       factory: factory
-      path: query.path
-      container: query.container
+      name: name
     }
 
   resolver.$name = 'dataFirstResolver'
@@ -339,13 +329,13 @@ module.exports.newDataSelectResolver = (options = {}) ->
   options.nameToTable ?= (name) ->
     name + 'Table'
 
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     # we dont need to do anything
     if result?
       return result
 
-    match = options.matcher query.path[0]
+    match = options.matcher name
     # we cant do anything
     unless match? and match.type is 'select'
       return
@@ -374,8 +364,7 @@ module.exports.newDataSelectResolver = (options = {}) ->
 
     return {
       factory: factory
-      container: query.container
-      path: query.path
+      name: name
     }
 
   resolver.$name = 'dataSelectResolver'
@@ -401,12 +390,12 @@ module.exports.newDataInsertResolver = (options = {}) ->
   options.nameToAllowedColumns ?= (name) ->
     name + 'InsertableColumns'
 
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    match = options.matcher query.path[0]
+    match = options.matcher name
     unless match?
       return
 
@@ -425,8 +414,7 @@ module.exports.newDataInsertResolver = (options = {}) ->
 
     return {
       factory: factory
-      path: query.path
-      container: query.container
+      name: name
     }
 
   resolver.$name = 'dataInsertResolver'
@@ -461,12 +449,12 @@ module.exports.newDataUpdateResolver = (options = {}) ->
   options.nameToAllowedColumns ?= (name) ->
     name + 'UpdateableColumns'
 
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    match = options.matcher query.path[0]
+    match = options.matcher name
     unless match?
       return
 
@@ -490,8 +478,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
 
     return {
       factory: factory
-      path: query.path
-      container: query.container
+      name: name
     }
 
   resolver.$name = 'dataUpdateResolver'
@@ -524,12 +511,12 @@ module.exports.newDataDeleteResolver = (options = {}) ->
   options.nameToTable ?= (name) ->
     name + 'Table'
 
-  resolver = (query, inner) ->
-    result = inner query
+  resolver = (name, container, inner) ->
+    result = inner name
     if result?
       return result
 
-    match = options.matcher query.path[0]
+    match = options.matcher name
     unless match?
       return
 
@@ -550,8 +537,7 @@ module.exports.newDataDeleteResolver = (options = {}) ->
 
     return {
       factory: factory
-      container: query.container
-      path: query.path
+      name: name
     }
 
   resolver.$name = 'dataDeleteResolver'
@@ -561,15 +547,15 @@ module.exports.newDataDeleteResolver = (options = {}) ->
 # namespace
 
 module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
-  resolver = (query, inner) ->
+  resolver = (name, container, inner) ->
     # if the name is directly resolvable return it
-    value = inner query
+    value = inner name
     if value?
       return value
 
     # otherwise try out namespace mappings
 
-    parts = query.path[0].split '_'
+    parts = name.split '_'
     if parts.length is 1
       # common case (no namespace part)
       aliasPart = ''
@@ -596,11 +582,7 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
             namePart
           else
             [namespace, namePart].join('_')
-        newPath = query.path.slice()
-        newPath[0] = mappedName
-        resolved = inner
-          container: query.container
-          path: newPath
+        resolved = inner mappedName
         if resolved?
           results.push
             namespace: namespace
@@ -613,7 +595,7 @@ module.exports.newNamespaceResolver = (aliasToNamespaces = {}) ->
       else
         lines = [
           "ambiguity in namespace resolver."
-          "\"#{query.path[0]}\" maps to multiple resolvable names:"
+          "\"#{name}\" maps to multiple resolvable names:"
         ]
         results.forEach (result) ->
           lines.push "#{result.mappedName} (#{aliasPart} -> #{result.namespace})"
