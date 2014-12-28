@@ -91,12 +91,13 @@ module.exports.reverseIndex = (index) ->
   return reverseIndex
 
 ###################################################################################
-# env
+# env:
+# envIntBcryptCost -> parse env var BCRYPT_COST as integer
 
-module.exports.parseEnvSpec = (name, flagPrefix = 'env') ->
+module.exports.parseEnvSpec = (name, flag = 'env') ->
   words = module.exports.splitCamelcase name
 
-  unless words[0] is flagPrefix
+  unless words[0] is flag
     return
 
   maybe = words[1] is 'maybe'
@@ -121,14 +122,14 @@ module.exports.parseEnvSpec = (name, flagPrefix = 'env') ->
     envVarName: envVarName
   }
 
-module.exports.newEnvResolver = (flagPrefix) ->
+module.exports.newEnvResolver = (flag) ->
   resolver = (name, container, inner) ->
     result = inner name
     # we dont need to do anything
     if result?
       return result
 
-    spec = module.exports.parseEnvSpec name, flagPrefix
+    spec = module.exports.parseEnvSpec name, flag
 
     # we cant do anything
     unless spec?
