@@ -1,13 +1,17 @@
 {
   "name": "blaze-forge",
   "version": "0.1.0",
+  "description": "",
+  "keywords": [
+  ],
+  "homepage": "http://github.com/snd/blaze-forge",
   "author": {
     "name": "Maximilian Krüger",
     "email": "kruemaxi@gmail.com",
     "url": "http://github.com/snd"
   },
   "bugs": {
-    "url": "http://github.com/snd/mohair/blaze-forge",
+    "url": "http://github.com/snd/blaze-forge",
     "email": "kruemaxi@gmail.com"
   },
   "repository": {
@@ -19,18 +23,20 @@
     "url": "git://github.com/snd/blaze-forge/LICENSE"
   },
   "engines": {
-    "node": ">=0.8.5"
+    "node": ">=0.10.0"
   },
   "devDependencies": {
-    "coffee-script": "1.7.1",
+    "coffee-script": "1.8.0",
     "nodeunit": "0.9.0",
     "hinoki": "0.3.0-beta.11"
   },
-  "main": "src/forge",
   "scripts": {
+    "compile": "node_modules/coffee-script/bin/coffee --bare --compile --output src src/*.coffee",
+    "clean": "rm -f src/*.js",
     "prepublish": "node_modules/coffee-script/bin/coffee --bare --compile --output src src/*.coffee",
-    "postpublish": "rm src/*.js",
-    "pretest": "node_modules/coffee-script/bin/coffee --bare --compile --output src src/*.coffee",
-    "test": "node_modules/nodeunit/bin/nodeunit test/*.coffee"
-  }
+    "pretest": "rm -f src/*.js",
+    "test": "node_modules/nodeunit/bin/nodeunit test/*.coffee || :",
+    "posttest": "node_modules/coffee-script/bin/coffee --bare --compile --output src src/*.coffee"
+  },
+  "main": "src/forge"
 }
