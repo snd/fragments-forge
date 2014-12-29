@@ -271,6 +271,9 @@ module.exports.parseDataSelect = (name) ->
 
   [table, where...] = module.exports.splitArray tableWhere, 'where'
 
+  if table.length is 0
+    return
+
   whereProcessed = where
     .filter (x) -> x.length isnt 0
     .map module.exports.joinUnderscore
@@ -317,19 +320,25 @@ module.exports.newDataFirstResolver = (options = {}) ->
 
     factory = (table) ->
       (args...) ->
-        q = table
-        match.where.forEach (x, index) ->
+        query = table
+        index = 0
+        match.where.forEach (x) ->
           condition = {}
-          condition[x] = args[index]
-          q = q.where condition
+          condition[x] = args[index++]
+          query = query.where condition
         if match.order.length isnt 0
           order = match.order
             .map (x) ->
               x.column + ' ' + x.direction
             .join (', ')
-          q = q.order order
+          query = query.order order
+        if match.withConnection
+          connection = args[index]
+          unless connection?
+            throw new Error "#{name} must be called with connection as argument number #{index+1}"
+          query = query.setConnection connection
 
-        q.first()
+        query.first()
 
     factory.$inject = [
       options.nameToTable(match.name)
@@ -368,9 +377,10 @@ module.exports.newDataSelectResolver = (options = {}) ->
     factory = (table) ->
       (args...) ->
         q = table
-        match.where.forEach (x, index) ->
+        index = 0
+        match.where.forEach (x) ->
           condition = {}
-          condition[x] = args[index]
+          condition[x] = args[index++]
           q = q.where condition
         if match.order.length isnt 0
           order = match.order
@@ -378,6 +388,11 @@ module.exports.newDataSelectResolver = (options = {}) ->
               x.column + ' ' + x.direction
             .join (', ')
           q = q.order order
+        if match.withConnection
+          connection = args[index]
+          unless connection?
+            throw new Error "#{name} must be called with connection as argument number #{index+1}"
+          q = q.setConnection connection
         q.find()
 
     factory.$inject = [
@@ -403,8 +418,17 @@ module.exports.parseDataInsert = (name) ->
   unless 'insert' is words[0]
     return
 
+  [table, withConnection] = module.exports.splitArray(
+    words.slice(1)
+    ['with', 'connection']
+  )
+
+  if table.length is 0
+    return
+
   {
-    name: module.exports.joinCamelcase(words.slice(1))
+    name: module.exports.joinCamelcase(table)
+    withConnection: withConnection?
   }
 
 module.exports.newDataInsertResolver = (options = {}) ->
@@ -424,8 +448,13 @@ module.exports.newDataInsertResolver = (options = {}) ->
       return
 
     factory = (table, allowedColumns) ->
-      (data) ->
-        table
+      (data, connection) ->
+        query = table
+        if match.withConnection
+          unless connection?
+            throw new Error "#{name} must be called with connection as argument number #{index+1}"
+          query = query.setConnection connection
+        query
           .allowedColumns(allowedColumns)
           .insert(data)
 
@@ -453,17 +482,24 @@ module.exports.parseDataUpdate = (name) ->
   unless 'update' is words[0]
     return
 
-  rest = words.slice(1)
+  [tableWhere, withConnection] = module.exports.splitArray(
+    words.slice(1)
+    ['with', 'connection']
+  )
 
-  partition = module.exports.splitArray rest, 'where'
+  [table, where...] = module.exports.splitArray tableWhere, 'where'
+
+  if table.length is 0
+    return
 
   # dont allow mass update without condition for security reasons
-  if partition.length is 1
+  if where.length is 0
     return
 
   {
-    name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
+    name: module.exports.joinCamelcase table
+    where: where.map (x) -> module.exports.joinUnderscore x
+    withConnection: withConnection?
   }
 
 module.exports.newDataUpdateResolver = (options = {}) ->
@@ -485,10 +521,16 @@ module.exports.newDataUpdateResolver = (options = {}) ->
     factory = (table, allowedColumns) ->
       (data, args...) ->
         query = table
-        match.where.forEach (x, index) ->
+        index = 0
+        match.where.forEach (x) ->
           condition = {}
-          condition[x] = args[index]
+          condition[x] = args[index++]
           query = query.where condition
+        if match.withConnection
+          connection = args[index]
+          unless connection?
+            throw new Error "#{name} must be called with connection as argument number #{index+1}"
+          query = query.setConnection connection
         query
           .allowedColumns(allowedColumns)
           .update(data)
@@ -517,17 +559,24 @@ module.exports.parseDataDelete = (name) ->
   unless 'delete' is words[0]
     return
 
-  rest = words.slice(1)
+  [tableWhere, withConnection] = module.exports.splitArray(
+    words.slice(1)
+    ['with', 'connection']
+  )
 
-  partition = module.exports.splitArray rest, 'where'
+  [table, where...] = module.exports.splitArray tableWhere, 'where'
 
-  # dont allow mass delete without condition for security reasons
-  if partition.length is 1
+  if table.length is 0
+    return
+
+  # dont allow mass update without condition for security reasons
+  if where.length is 0
     return
 
   {
-    name: module.exports.joinCamelcase partition[0]
-    where: partition.slice(1).map (x) -> module.exports.joinUnderscore x
+    name: module.exports.joinCamelcase table
+    where: where.map (x) -> module.exports.joinUnderscore x
+    withConnection: withConnection?
   }
 
 module.exports.newDataDeleteResolver = (options = {}) ->
@@ -547,10 +596,16 @@ module.exports.newDataDeleteResolver = (options = {}) ->
     factory = (table) ->
       (args...) ->
         query = table
-        match.where.forEach (x, index) ->
+        index = 0
+        match.where.forEach (x) ->
           condition = {}
-          condition[x] = args[index]
+          condition[x] = args[index++]
           query = query.where condition
+        if match.withConnection
+          connection = args[index]
+          unless connection?
+            throw new Error "#{name} must be called with connection as argument number #{index+1}"
+          query = query.setConnection connection
         query.delete()
 
     factory.$inject = [

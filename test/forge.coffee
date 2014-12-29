@@ -714,6 +714,8 @@ module.exports =
 # parse select
 
   'parseDataSelect': (test) ->
+    test.ok not forge.parseDataSelect('first')
+    test.ok not forge.parseDataSelect('firstWithConnection')
     test.deepEqual forge.parseDataSelect('firstUser'),
       type: 'first'
       name: 'user'
@@ -855,6 +857,41 @@ module.exports =
           test.deepEqual calls.order, ['updated_at DESC, order ASC']
           test.done()
 
+    'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrderWithConnection': (test) ->
+      test.expect 4
+      calls =
+        where: []
+        order: []
+      table = {}
+      result = {}
+      connection = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.order = (arg) ->
+        calls.order.push arg
+        table
+      table.setConnection = (arg) ->
+        test.equal arg, connection
+        table
+      table.first = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataFirstResolver()]
+
+      hinoki.get(container, 'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrderWithConnection')
+        .then (accessor) ->
+          test.equal result, accessor 1, 2, connection
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.deepEqual calls.order, ['updated_at DESC, order ASC']
+          test.done()
+
 ###################################################################################
 # select
 
@@ -891,14 +928,56 @@ module.exports =
           test.deepEqual calls.order, ['updated_at DESC, order ASC']
           test.done()
 
+    'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrderWithConnection': (test) ->
+      test.expect 4
+      calls =
+        where: []
+        order: []
+      table = {}
+      result = {}
+      connection = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.order = (arg) ->
+        calls.order.push arg
+        table
+      table.setConnection = (arg) ->
+        test.equal arg, connection
+        table
+      table.find = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataSelectResolver()]
+
+      hinoki.get(container, 'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtDescOrderByOrderWithConnection')
+        .then (accessor) ->
+          test.equal result, accessor 1, 2, connection
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.deepEqual calls.order, ['updated_at DESC, order ASC']
+          test.done()
+
 ###################################################################################
 # insert
 
   'parseDataInsert': (test) ->
+    test.ok not forge.parseDataInsert('insert')
+    test.ok not forge.parseDataInsert('insertWithConnection')
     test.deepEqual forge.parseDataInsert('insertOrderReport'),
       name: 'orderReport'
+      withConnection: false
     test.deepEqual forge.parseDataInsert('insertUserWhere'),
       name: 'userWhere'
+      withConnection: false
+    test.deepEqual forge.parseDataInsert('insertUserWhereWithConnection'),
+      name: 'userWhere'
+      withConnection: true
 
     test.done()
 
@@ -928,14 +1007,49 @@ module.exports =
           test.equal result, accessor data
           test.done()
 
+    'insertUserWithConnection': (test) ->
+      test.expect 4
+      result = {}
+      data = {}
+      allowedColumns = {}
+      connection = {}
+      table = {}
+      table.allowedColumns = (arg) ->
+        test.equal arg, allowedColumns
+        table
+      table.insert = (arg) ->
+        test.equal arg, data
+        result
+      table.setConnection = (arg) ->
+        test.equal arg, connection
+        table
+
+      container =
+        values:
+          userTable: table
+          userInsertableColumns: allowedColumns
+        resolvers: [forge.newDataInsertResolver()]
+
+      hinoki.get(container, 'insertUserWithConnection')
+        .then (accessor) ->
+          test.equal result, accessor data, connection
+          test.done()
+
 ###################################################################################
 # update
 
   'parseDataUpdate': (test) ->
+    test.ok not forge.parseDataUpdate('update')
+    test.ok not forge.parseDataUpdate('updateWithConnection')
     test.ok not forge.parseDataUpdate('updateOrderReport')?
     test.deepEqual forge.parseDataUpdate('updateOrderReportWhereRegistrationNumber'),
       name: 'orderReport'
       where: ['registration_number']
+      withConnection: false
+    test.deepEqual forge.parseDataUpdate('updateOrderReportWhereRegistrationNumberWithConnection'),
+      name: 'orderReport'
+      where: ['registration_number']
+      withConnection: true
 
     test.done()
 
@@ -974,14 +1088,58 @@ module.exports =
           ]
           test.done()
 
+    'updateUserWhereIdWhereCreatedAtWithConnection': (test) ->
+      test.expect 5
+      calls =
+        where: []
+      result = {}
+      data = {}
+      allowedColumns = {}
+      connection = {}
+      table = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.allowedColumns = (arg) ->
+        test.equal arg, allowedColumns
+        table
+      table.setConnection = (arg) ->
+        test.equal arg, connection
+        table
+      table.update = (arg) ->
+        test.equal arg, data
+        result
+
+      container =
+        values:
+          userTable: table
+          userUpdateableColumns: allowedColumns
+        resolvers: [forge.newDataUpdateResolver()]
+
+      hinoki.get(container, 'updateUserWhereIdWhereCreatedAtWithConnection')
+        .then (accessor) ->
+          test.equal result, accessor data, 1, 2, connection
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.done()
+
 ###################################################################################
 # delete
 
   'parseDataDelete': (test) ->
+    test.ok not forge.parseDataDelete('delete')
+    test.ok not forge.parseDataDelete('deleteWithConnection')
     test.ok not forge.parseDataDelete('deleteOrderReport')?
     test.deepEqual forge.parseDataDelete('deleteOrderReportWhereOrderId'),
       name: 'orderReport'
       where: ['order_id']
+      withConnection: false
+    test.deepEqual forge.parseDataDelete('deleteOrderReportWhereOrderIdWithConnection'),
+      name: 'orderReport'
+      where: ['order_id']
+      withConnection: true
 
     test.done()
 
@@ -1007,6 +1165,36 @@ module.exports =
       hinoki.get(container, 'deleteUserWhereIdWhereCreatedAt')
         .then (accessor) ->
           test.equal result, accessor 1, 2
+          test.deepEqual calls.where, [
+            {id: 1}
+            {created_at: 2}
+          ]
+          test.done()
+
+    'deleteUserWhereIdWhereCreatedAtWithConnection': (test) ->
+      test.expect 3
+      calls =
+        where: []
+      table = {}
+      result = {}
+      connection = {}
+      table.where = (arg) ->
+        calls.where.push arg
+        table
+      table.setConnection = (arg) ->
+        test.equal arg, connection
+        table
+      table.delete = ->
+        result
+
+      container =
+        values:
+          userTable: table
+        resolvers: [forge.newDataDeleteResolver()]
+
+      hinoki.get(container, 'deleteUserWhereIdWhereCreatedAtWithConnection')
+        .then (accessor) ->
+          test.equal result, accessor 1, 2, connection
           test.deepEqual calls.where, [
             {id: 1}
             {created_at: 2}
