@@ -611,14 +611,14 @@ module.exports =
               test.done()
 
 ###################################################################################
-# table
+# table object
 
-  'newTableResolver':
+  'newTableObjectResolver':
 
     'no match': (test) ->
       test.expect 1
       container =
-        resolvers: [forge.newTableResolver()]
+        resolvers: [forge.newTableObjectResolver()]
 
       hinoki.get(container, 'Table')
         .catch hinoki.errors.Unresolvable, (error) ->
@@ -630,7 +630,7 @@ module.exports =
       container =
         values:
           userTable: {}
-        resolvers: [forge.newTableResolver()]
+        resolvers: [forge.newTableObjectResolver()]
 
       hinoki.get(container, 'userTable')
         .then (result) ->
@@ -643,7 +643,7 @@ module.exports =
         values:
           table:
             user: {}
-        resolvers: [forge.newTableResolver()]
+        resolvers: [forge.newTableObjectResolver()]
 
       hinoki.get(container, 'userTable')
         .then (result) ->
@@ -656,7 +656,7 @@ module.exports =
         values:
           table:
             projectMessage: {}
-        resolvers: [forge.newTableResolver()]
+        resolvers: [forge.newTableObjectResolver()]
 
       hinoki.get(container, 'projectMessageTable')
         .then (result) ->
@@ -664,53 +664,51 @@ module.exports =
           test.done()
 
 ###################################################################################
-# alias
+# table
 
-  'newAliasResolver':
+  'newTableResolver':
 
-    'passthrough': (test) ->
-      test.expect 1
-      container =
-        values:
-          thing: {}
-        resolvers: [forge.newAliasResolver()]
-
-      hinoki.get(container, 'thing').then (result) ->
-        test.equal result, container.values.thing
-        test.done()
-
-    'no alias': (test) ->
-      test.expect 0
-      container =
-        resolvers: [forge.newAliasResolver()]
-
-      hinoki.get(container, 'thing')
-        .catch hinoki.errors.Unresolvable, (error) ->
-        test.done()
-
-    'value': (test) ->
-      test.expect 1
-      container =
-        values:
-          thing: {}
-        resolvers: [forge.newAliasResolver({alias: 'thing'})]
-
-      hinoki.get(container, 'alias').then (result) ->
-        test.equal result, container.values.thing
-        test.done()
-
-    'factory': (test) ->
+    'userTable': (test) ->
       test.expect 2
-      value = {}
-      container =
-        factories:
-          thing: -> value
-        resolvers: [forge.newAliasResolver({alias: 'thing'})]
+      calls =
+        table: []
+      mesa = {}
+      table = {}
+      mesa.table = (arg) ->
+        calls.table.push arg
+        table
 
-      hinoki.get(container, 'alias').then (result) ->
-        test.equal value, result
-        test.equal value, container.values.thing
-        test.done()
+      container =
+        values:
+          mesa: mesa
+        resolvers: [forge.newTableResolver()]
+
+      hinoki.get(container, 'userTable')
+        .then (result) ->
+          test.equal result, table
+          test.deepEqual calls.table, ['user']
+          test.done()
+
+    'projectMessageTable': (test) ->
+      test.expect 2
+      calls =
+        table: []
+      mesa = {}
+      table = {}
+      mesa.table = (arg) ->
+        calls.table.push arg
+        table
+
+      container =
+        values:
+          mesa: mesa
+        resolvers: [forge.newTableResolver()]
+
+      hinoki.get(container, 'projectMessageTable')
+        .then (result) ->
+          test.equal result, table
+          test.deepEqual calls.table, ['project_message']
+          test.done()
 
 ###################################################################################
 # parse select
