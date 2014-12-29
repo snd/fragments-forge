@@ -32,9 +32,27 @@ and looked up as property on the `env` dependency.
 
 ## table
 
+> now you don't even need to define your mesa tables...
+
+[pattern:](#simple-regex-like-pattern-language-used-in-this-document)
+
+```
+"table" Table
+```
+
+auto generate table:
+
+- `userTable` will return `mesa.table('user')`
+- `orderReportTable` will return `mesa.table('order_report')`
+- ...
+
+*serverside only*
+
+## table object
+
 > mesa tables often need circular dependencies for associations.
 > hinoki doesn't support circular dependencies.
-> fix that mismatch!
+> table object resolvers fix that.
 
 [pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
