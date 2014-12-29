@@ -1014,6 +1014,55 @@ module.exports =
           test.done()
 
 ###################################################################################
+# alias
+
+  'newAliasResolver':
+
+    'passthrough': (test) ->
+      test.expect 1
+      container =
+        values:
+          thing: {}
+        resolvers: [forge.newAliasResolver()]
+
+      hinoki.get(container, 'thing').then (result) ->
+        test.equal result, container.values.thing
+        test.done()
+
+    'no alias': (test) ->
+      test.expect 0
+      container =
+        resolvers: [forge.newAliasResolver()]
+
+      hinoki.get(container, 'thing')
+        .catch hinoki.errors.Unresolvable, (error) ->
+        test.done()
+
+    'value': (test) ->
+      test.expect 1
+      container =
+        values:
+          thing: {}
+        resolvers: [forge.newAliasResolver({alias: 'thing'})]
+
+      hinoki.get(container, 'alias').then (result) ->
+        test.equal result, container.values.thing
+        test.done()
+
+    'factory': (test) ->
+      test.expect 2
+      value = {}
+      container =
+        factories:
+          thing: -> value
+        resolvers: [forge.newAliasResolver({alias: 'thing'})]
+
+      hinoki.get(container, 'alias').then (result) ->
+        test.equal value, result
+        test.equal value, container.values.thing
+        test.done()
+
+###################################################################################
 # namespace
 
   'newNamespaceResolver':
