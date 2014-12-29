@@ -822,7 +822,9 @@ module.exports =
 ###################################################################################
 # first
 
-  'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+  'newDataFirstResolver':
+
+    'firstUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
       test.expect 3
       calls =
         where: []
@@ -856,7 +858,9 @@ module.exports =
 ###################################################################################
 # select
 
-  'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
+  'newDataSelectResolver':
+
+    'selectUserWhereIdWhereCreatedAtOrderByUpdatedAtOrderByOrder': (test) ->
       test.expect 3
       calls =
         where: []
@@ -898,7 +902,9 @@ module.exports =
 
     test.done()
 
-  'insertUser': (test) ->
+  'newDataInsertResolver':
+
+    'insertUser': (test) ->
       test.expect 3
       result = {}
       data = {}
@@ -933,7 +939,9 @@ module.exports =
 
     test.done()
 
-  'updateUserWhereIdWhereCreatedAt': (test) ->
+  'newDataUpdateResolver':
+
+    'updateUserWhereIdWhereCreatedAt': (test) ->
       test.expect 4
       calls =
         where: []
@@ -977,7 +985,9 @@ module.exports =
 
     test.done()
 
-  'deleteUserWhereIdWhereCreatedAt': (test) ->
+  'newDataDeleteResolver':
+
+    'deleteUserWhereIdWhereCreatedAt': (test) ->
       test.expect 2
       calls =
         where: []
