@@ -1,5 +1,9 @@
 # blaze-forge
 
+[![NPM Package](https://img.shields.io/npm/v/blaze-forge.svg?style=flat)](https://www.npmjs.org/package/blaze-forge)
+[![Build Status](https://travis-ci.org/snd/blaze-forge.svg?branch=master)](https://travis-ci.org/snd/blaze-forge/branches)
+[![Dependencies](https://david-dm.org/snd/blaze-forge.svg)](https://david-dm.org/snd/blaze-forge)
+
 > scrap your boilerplate by auto-generating dependencies!
 
 ## env
@@ -241,3 +245,5 @@ opinionated
 convention over configuration.
 entirely opt in.
 provides defaults which can all be explicitely overwritten.
+
+## [license: MIT](LICENSE)
