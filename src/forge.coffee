@@ -257,13 +257,19 @@ module.exports.parseDataSelect = (name) ->
   unless type in ['first', 'select']
     return
 
-  tableAndWhereAndOrder = words.slice(1)
+  tableWhereOrderConnection = words.slice(1)
 
-  tableAndWhere = tableAndWhereAndOrder
-  [tableAndWhere, order...] = module.exports.splitArray tableAndWhereAndOrder,
+  [tableWhereOrder, withConnection] = module.exports.splitArray(
+    tableWhereOrderConnection
+    ['with', 'connection']
+  )
+
+  [tableWhere, order...] = module.exports.splitArray(
+    tableWhereOrder
     ['order', 'by']
+  )
 
-  [table, where...] = module.exports.splitArray tableAndWhere, 'where'
+  [table, where...] = module.exports.splitArray tableWhere, 'where'
 
   whereProcessed = where
     .filter (x) -> x.length isnt 0
@@ -289,6 +295,7 @@ module.exports.parseDataSelect = (name) ->
     name: module.exports.joinCamelcase table
     order: orderProcessed
     where: whereProcessed
+    withConnection: withConnection?
   }
 
 ###################################################################################

@@ -721,21 +721,43 @@ module.exports =
       name: 'user'
       order: []
       where: []
+      withConnection: false
+    test.deepEqual forge.parseDataSelect('firstUserWithConnection'),
+      type: 'first'
+      name: 'user'
+      order: []
+      where: []
+      withConnection: true
     test.deepEqual forge.parseDataSelect('selectUserCreatedAt'),
       type: 'select'
       name: 'userCreatedAt'
       order: []
       where: []
+      withConnection: false
+    test.deepEqual forge.parseDataSelect('selectUserCreatedAtWithConnection'),
+      type: 'select'
+      name: 'userCreatedAt'
+      order: []
+      where: []
+      withConnection: true
     test.deepEqual forge.parseDataSelect('firstUserWhereCreatedAt'),
       type: 'first'
       name: 'user'
       order: []
       where: ['created_at']
+      withConnection: false
+    test.deepEqual forge.parseDataSelect('firstUserWhereCreatedAtWithConnection'),
+      type: 'first'
+      name: 'user'
+      order: []
+      where: ['created_at']
+      withConnection: true
     test.deepEqual forge.parseDataSelect('selectOrderReportWhereOrderIdWhereCreatedAt'),
       type: 'select'
       name: 'orderReport'
       order: []
       where: ['order_id', 'created_at']
+      withConnection: false
     test.deepEqual forge.parseDataSelect('firstOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtDesc'),
       type: 'first'
       name: 'orderReport'
@@ -746,6 +768,18 @@ module.exports =
         }
       ]
       where: ['order_id', 'created_at']
+      withConnection: false
+    test.deepEqual forge.parseDataSelect('firstOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtDescWithConnection'),
+      type: 'first'
+      name: 'orderReport'
+      order: [
+        {
+          column: 'created_at'
+          direction: 'DESC'
+        }
+      ]
+      where: ['order_id', 'created_at']
+      withConnection: true
     test.deepEqual forge.parseDataSelect('selectOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtOrderByIdDescOrderByReportNumberAsc'),
       type: 'select'
       name: 'orderReport'
