@@ -74,7 +74,7 @@ looked up as property on the `table` dependency.
 [pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
-("first" | "select") Table ("Where" Column)* ("OrderBy" Column ("Asc" | "Desc")?)*
+("first" | "select") Table ("Where" Column)* ("OrderBy" Column ("Asc" | "Desc")?)* ("WithConnection")?
 ```
 
 this code
@@ -99,6 +99,9 @@ ORDER BY view_count ASC, id DESC;
 
 if it starts with `first` it will limit the query by 1 and resolve to the first row or undefined if no rows were returned.
 
+the optional suffix `WithConnection` accepts an explicit connection as the last argument.
+this is useful for transactions.
+
 *serverside only - for now*
 
 ## insert
@@ -106,7 +109,7 @@ if it starts with `first` it will limit the query by 1 and resolve to the first 
 [pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
-"insert" Table
+"insert" Table ("WithConnection")?
 ```
 
 this code
@@ -126,6 +129,9 @@ INSERT INTO user (email, password)
 VALUES ('test@example.com', 'secret');
 ```
 
+the optional suffix `WithConnection` accepts an explicit connection as the last argument.
+this is useful for transactions.
+
 #### WARNING!
 
 in order to prevent a mass-assignment security vulnerability
@@ -140,10 +146,10 @@ a dependency named `table "InsertableColumns"`
 [pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
-"update" Table ("Where" Column)+
+"update" Table ("Where" Column)+ ("WithConnection")?
 ```
 
-*note the + at the end: updates without conditions are not allowed for security reasons!*
+*note the + at the end of the `Where`: updates without conditions are not allowed for security reasons!*
 
 this code
 
@@ -165,6 +171,9 @@ WHERE id = 100
 AND name IS NOT NULL;
 ```
 
+the optional suffix `WithConnection` accepts an explicit connection as the last argument.
+this is useful for transactions.
+
 #### WARNING!
 
 in order to prevent a mass-assignment security vulnerability
@@ -179,10 +188,10 @@ a dependency called `table "UpdateableColumns"`
 [pattern:](#simple-regex-like-pattern-language-used-in-this-document)
 
 ```
-"delete" Table ("Where" Column)+
+"delete" Table ("Where" Column)+ ("WithConnection")?
 ```
 
-*note the + at the end: deletes without conditions are not allowed for security reasons!*
+*note the + at the end of the `Where`: deletes without conditions are not allowed for security reasons!*
 
 this code
 
@@ -196,6 +205,9 @@ would execute a query similar to
 ```sql
 DELETE FROM user WHERE name = 'alice';
 ```
+
+the optional suffix `WithConnection` accepts an explicit connection as the last argument.
+this is useful for transactions.
 
 *serverside only - for now*
 
@@ -216,7 +228,7 @@ string which will be bound to `EnvVar`.
 
 the string `envMaybeStringDatabaseUrl` would satisfy that pattern with `EnvVar = DatabaseUrl`.
 
-## ideas and raw thoughts
+## todos, ideas and raw thoughts
 
 you can not give arguments to the factories
 but through resolvers you can give some sort of arguments
