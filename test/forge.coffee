@@ -796,6 +796,26 @@ module.exports =
         }
       ]
       where: ['order_id', 'created_at']
+      withConnection: false
+    test.deepEqual forge.parseDataSelect('selectOrderReportWhereOrderIdWhereCreatedAtOrderByCreatedAtOrderByIdDescOrderByReportNumberAscWithConnection'),
+      type: 'select'
+      name: 'orderReport'
+      order: [
+        {
+          column: 'created_at'
+          direction: 'ASC'
+        }
+        {
+          column: 'id'
+          direction: 'DESC'
+        }
+        {
+          column: 'report_number'
+          direction: 'ASC'
+        }
+      ]
+      where: ['order_id', 'created_at']
+      withConnection: true
 
     test.done()
 
