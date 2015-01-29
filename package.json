@@ -1,26 +1,26 @@
 {
-  "name": "blaze-forge",
+  "name": "fragments-forge",
   "version": "0.1.0",
   "description": "scrap your boilerplate by auto-generating dependencies",
   "keywords": [
   ],
-  "homepage": "http://github.com/snd/blaze-forge",
+  "homepage": "http://github.com/snd/fragments-forge",
   "author": {
     "name": "Maximilian Krüger",
     "email": "kruemaxi@gmail.com",
     "url": "http://github.com/snd"
   },
   "bugs": {
-    "url": "http://github.com/snd/blaze-forge",
+    "url": "http://github.com/snd/fragments-forge",
     "email": "kruemaxi@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/snd/blaze-forge.git"
+    "url": "git://github.com/snd/fragments-forge.git"
   },
   "licenses": {
     "type": "MIT",
-    "url": "git://github.com/snd/blaze-forge/LICENSE"
+    "url": "git://github.com/snd/fragments-forge/LICENSE"
   },
   "engines": {
     "node": ">=0.10.0"
