@@ -485,7 +485,7 @@ module.exports.newDataInsertResolver = function(options) {
           }
           query = query.setConnection(connection);
         }
-        return query.allowedColumns(allowedColumns).insert(data);
+        return query.allow(allowedColumns).insert(data);
       };
     };
     factory.$inject = [options.nameToTable(match.name), options.nameToAllowedColumns(match.name)];
@@ -570,7 +570,7 @@ module.exports.newDataUpdateResolver = function(options) {
           }
           query = query.setConnection(connection);
         }
-        return query.allowedColumns(allowedColumns).update(data);
+        return query.allow(allowedColumns).update(data);
       };
     };
     factory.$inject = [options.nameToTable(match.name), options.nameToAllowedColumns(match.name)];
