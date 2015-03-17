@@ -989,7 +989,7 @@ module.exports =
       data = {}
       allowedColumns = {}
       table = {}
-      table.allowedColumns = (arg) ->
+      table.allow = (arg) ->
         test.equal arg, allowedColumns
         table
       table.insert = (arg) ->
@@ -1014,7 +1014,7 @@ module.exports =
       allowedColumns = {}
       connection = {}
       table = {}
-      table.allowedColumns = (arg) ->
+      table.allow = (arg) ->
         test.equal arg, allowedColumns
         table
       table.insert = (arg) ->
@@ -1066,7 +1066,7 @@ module.exports =
       table.where = (arg) ->
         calls.where.push arg
         table
-      table.allowedColumns = (arg) ->
+      table.allow = (arg) ->
         test.equal arg, allowedColumns
         table
       table.update = (arg) ->
@@ -1100,7 +1100,7 @@ module.exports =
       table.where = (arg) ->
         calls.where.push arg
         table
-      table.allowedColumns = (arg) ->
+      table.allow = (arg) ->
         test.equal arg, allowedColumns
         table
       table.setConnection = (arg) ->
