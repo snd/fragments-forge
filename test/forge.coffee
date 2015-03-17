@@ -1417,10 +1417,10 @@ module.exports =
       'userAgent': (test) ->
         test.expect 2
         resolver = forge.newNamespaceResolver
-          '': ['blaze', 'dragon']
+          '': ['fragments', 'dragon']
           'u': ['util', 'delta']
           'urlApi': ['url_api']
-          'blaze_port': ['']
+          'fragments_port': ['']
 
         value = {}
         container =
@@ -1436,10 +1436,10 @@ module.exports =
       'urlApi_passwordForgot': (test) ->
         test.expect 1
         resolver = forge.newNamespaceResolver
-          '': ['blaze', 'dragon']
+          '': ['fragments', 'dragon']
           'u': ['util', 'delta']
           'urlApi': ['url_api']
-          'blaze_port': ['']
+          'fragments_port': ['']
 
         value = {}
         container =
