@@ -1,8 +1,10 @@
-# blaze-forge
+# fragments-forge
 
-[![NPM Package](https://img.shields.io/npm/v/blaze-forge.svg?style=flat)](https://www.npmjs.org/package/blaze-forge)
-[![Build Status](https://travis-ci.org/snd/blaze-forge.svg?branch=master)](https://travis-ci.org/snd/blaze-forge/branches)
-[![Dependencies](https://david-dm.org/snd/blaze-forge.svg)](https://david-dm.org/snd/blaze-forge)
+[![NPM Package](https://img.shields.io/npm/v/fragments-forge.svg?style=flat)](https://www.npmjs.org/package/fragments-forge)
+[![Build Status](https://travis-ci.org/snd/fragments-forge.svg?branch=master)](https://travis-ci.org/snd/fragments-forge/branches)
+[![Dependencies](https://david-dm.org/snd/fragments-forge.svg)](https://david-dm.org/snd/fragments-forge)
+
+**the documentation in this readme is work in progress, chaotic and incomplete**
 
 > scrap your boilerplate by auto-generating dependencies!
 
@@ -262,7 +264,7 @@ document that custom code with the same name takes precedence
 
 its like rubys method missing.
 
-blaze-forge is a resolver for hinoki containers that can autogenerate
+fragments-forge is a resolver for hinoki containers that can autogenerate
 common data accessor functions, loaders, etc.
 according to some conventions
 and greatly reduce the amount of code needed.
