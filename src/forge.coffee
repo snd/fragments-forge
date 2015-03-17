@@ -455,7 +455,7 @@ module.exports.newDataInsertResolver = (options = {}) ->
             throw new Error "#{name} must be called with connection as argument number #{index+1}"
           query = query.setConnection connection
         query
-          .allowedColumns(allowedColumns)
+          .allow(allowedColumns)
           .insert(data)
 
     factory.$inject = [
@@ -532,7 +532,7 @@ module.exports.newDataUpdateResolver = (options = {}) ->
             throw new Error "#{name} must be called with connection as argument number #{index+1}"
           query = query.setConnection connection
         query
-          .allowedColumns(allowedColumns)
+          .allow(allowedColumns)
           .update(data)
 
     factory.$inject = [
